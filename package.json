@@ -1,0 +1,27 @@
+{
+  "name": "stonkscord",
+  "version": "1.0.0",
+  "description": "A Discord bot allowing you to invest in server member counts",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "deploy": "node src/DeployCommands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nekiwo/StonksCord.git"
+  },
+  "author": "HTSTEM",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nekiwo/StonksCord/issues"
+  },
+  "homepage": "https://github.com/nekiwo/StonksCord#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.11.0",
+    "@discordjs/rest": "^0.2.0-canary.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.5.0"
+  }
+}
