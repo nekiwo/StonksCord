@@ -1,22 +1,22 @@
-const fs = require('fs');
-const { Client, Collection, Intents } = require('discord.js');
-const { clientId, token } = require('./config.json');
+const fs = require("fs");
+const { Client, Collection, Intents } = require("discord.js");
+const { Token } = require("./config.json");
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.data.name, command);
 }
 
-client.once('ready', () => {
-	console.log('Ready!');
+client.once("ready", () => {
+	console.log("Ready!");
 });
 
-client.on('interactionCreate', async interaction => {
+client.on("interactionCreate", async interaction => {
 	if (!interaction.isCommand()) return;
 
 	const command = client.commands.get(interaction.commandName);
@@ -27,8 +27,8 @@ client.on('interactionCreate', async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		return interaction.reply({ content: "Sorry, there has been an error", ephemeral: true });
 	}
 });
 
-client.login(token);
+client.login(Token);

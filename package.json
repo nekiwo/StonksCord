@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "deploy": "node src/DeployCommands.js"
+    "deploy": "cd src && node DeployCommands.js",
+    "update": "cd src && node DeployCommands && node index"
   },
   "repository": {
     "type": "git",
