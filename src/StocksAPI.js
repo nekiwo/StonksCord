@@ -1,7 +1,7 @@
 
 
 module.exports = {
-	IGetStockPrice: (GuildID) => {
+	GetStockInfo: (code) => {
         
     }
 };
