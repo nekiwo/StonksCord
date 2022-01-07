@@ -27,7 +27,7 @@ client.on("interactionCreate", async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		return interaction.reply({ content: "Sorry, there has been an error", ephemeral: true });
+		return interaction.reply({content: "Sorry, there has been an error", ephemeral: true});
 	}
 });
 
