@@ -18,13 +18,13 @@ module.exports = {
                 inline: true
             }, {
                 name: "1. Start by finding a server",
-                value: "Every stock is represented by a server and identified by it's invite link. To check a certain stock info, simply use the `/stock` command, and paste the server link\u000A"
+                value: "Every stonk is represented by a server and identified by its invite link. To check a certain stock info, simply use the `/stock` command, and paste the server link\u000A"
             }, {
-                name: "2. Buy/Sell a stock",
+                name: "2. Buy/Sell stonks",
                 value: "To buy or sell, simply use `/buy` and `/sell` commands respectively. First paste the server link (NOTE: it has to have me invited and at least 10 members) and the amount of the stocks you want to buy. Each stock costs the specified price. Every user starts out with 100 coins\u000A"
             }, {
                 name: "3. Watch the market",
-                value: "In order to have big gains, you must watch the market. Access your portfolio by using the `/portfolio` command. Here you can see your balance and owned stocks. Use commands such as `/stock` and `/top` for stock info.\u000A"
+                value: "In order to have big gains, you must watch the market. Access your portfolio by using the `/portfolio` command. Here you can see your balance and owned stonks. Use commands such as `/stock` and `/top` for stock info.\u000A"
             }, {
                 name: "4. Check out our server",
                 value: "Check out our investment hub server. Here you can talk about trading your favorite server stocks! Invite link: https://discord.gg/8BxJmu4HSu\u000A"
@@ -36,9 +36,7 @@ module.exports = {
             .setFooter("Thanks to Foo#7957, nekiwo#7574, and others at HTSTEM for contributing to StonksCord's development")
             .toJSON();
         
-            return interaction.reply({
-                embeds: [exampleEmbed]
-            });
+            return interaction.reply({embeds: [exampleEmbed]});
         }
 	},
 };
