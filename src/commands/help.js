@@ -7,7 +7,7 @@ module.exports = {
 		.setDescription("Not sure how to invest?"),
 	async execute(interaction) {
         if (interaction) {
-            const exampleEmbed = new MessageEmbed()
+            const helpEmbed = new MessageEmbed()
             .setColor("#03fc5e")
             .setTitle("Welcome new StonksCord user!")
             .setThumbnail("https://via.placeholder.com/128")
@@ -36,7 +36,7 @@ module.exports = {
             .setFooter("Thanks to Foo#7957, nekiwo#7574, and others at HTSTEM for contributing to StonksCord's development")
             .toJSON();
         
-            return interaction.reply({embeds: [exampleEmbed]});
+            return interaction.reply({embeds: [helpEmbed]});
         }
 	},
 };
