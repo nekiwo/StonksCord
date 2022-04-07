@@ -18,12 +18,17 @@ module.exports = {
             let stockCode;
             let stockInfo;
 
-            if (stringInput.length <= 6) {
-                stockCode = stringInput;
-                stockInfo = GetStockInfo(stockCode);
-                guild = InviteToGuild(stockInfo.Invite);
+            if (!stringInput.contains("/")) {
+                if (stringInput.contains("$")) {
+                    stockCode = stringInput;
+                    stockInfo = GetStockInfo(stockCode);
+                    guild = InviteToGuild(stockInfo.Invite);
+                } else {
+                    return interaction.reply("Sorry, you need to add `$` before your stock code");
+                }
             } else {
                 guild = InviteToGuild(stringInput.substring(stringInput.lastIndexOf("/") + 1));
+                console.log(guild)
                 stockCode = GuildToStockCode(guild);
                 stockInfo = GetStockInfo(stockCode);
             }
