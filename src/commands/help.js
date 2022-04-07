@@ -10,7 +10,7 @@ module.exports = {
             const helpEmbed = new MessageEmbed()
             .setColor("#03fc5e")
             .setTitle("Welcome new StonksCord user!")
-            .setThumbnail("https://via.placeholder.com/128")
+            //.setThumbnail("https://via.placeholder.com/128")
             .setDescription("Earn imaginary coins through server investment! StonksCord allows you to invest in Discord servers. Each stock's price corresponds with a server's member count (and some other factors). Try to gain more coins by buying/selling your stonks!")
             .addFields({
                 name: "\u200B",
@@ -21,7 +21,7 @@ module.exports = {
                 value: "Every stonk is represented by a server and identified by its invite link. To check a certain stock info, simply use the `/stock` command, and paste the server link\u000A"
             }, {
                 name: "2. Buy/Sell stonks",
-                value: "To buy or sell, simply use `/buy` and `/sell` commands respectively. First paste the server link (NOTE: it has to have me invited and at least 10 members) and the amount of the stocks you want to buy. Each stock costs the specified price. Every user starts out with 100 coins\u000A"
+                value: "To buy or sell, simply use `/buy` and `/sell` commands respectively. First paste the server link (NOTE: needs this bot invited & 10 members minimum) and the amount of the stocks you want to buy. Each stock costs the specified price. Every user starts out with 100 coins\u000A"
             }, {
                 name: "3. Watch the market",
                 value: "In order to have big gains, you must watch the market. Access your portfolio by using the `/portfolio` command. Here you can see your balance and owned stonks. Use commands such as `/stock` and `/top` for stock info.\u000A"
