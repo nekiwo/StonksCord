@@ -15,10 +15,6 @@ module.exports = {
         return "";
     },
 
-    GuildToStockCode: (code) => {
-        
-    },
-
     StockCodeToGuild: (code) => {
         
     }
