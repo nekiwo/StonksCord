@@ -12,15 +12,16 @@ module.exports = {
                 .setRequired(true)),
 	async execute(interaction) {
         if (interaction) {
-            const stringInput = interaction.options.getString("server");
+            const stringInput = interaction.options.getString("code");
+            console.log(stringInput)
 
             let guild;
             let stockCode;
             let stockInfo;
 
-            if (!stringInput.contains("/")) {
-                if (stringInput.contains("$")) {
-                    stockCode = stringInput;
+            if (!stringInput.includes("/")) {
+                if (stringInput.includes("$")) {
+                    stockCode = stringInput.replace("$", "");
                     stockInfo = GetStockInfo(stockCode);
                     guild = InviteToGuild(stockInfo.Invite);
                 } else {
@@ -48,15 +49,15 @@ module.exports = {
                 .setDescription(`[Click here for invite Link](${stockInfo.Invite})`)
                 .addFields({
                     name: "Stonk Price",
-                    value: stockInfo.Value,
+                    value: stockInfo.Cost,
                     inline: true
                 }, {
                     name: "Market Cap",
                     value: stockInfo.MarketCap,
                     inline: true
                 }, {
-                    name: "Total stonks owned",
-                    value: stockInfo.Stonks,
+                    name: "Total Shares",
+                    value: stockInfo.TotalShares,
                     inline: true
                 }, {
                     name: "Server",
@@ -64,7 +65,7 @@ module.exports = {
                     inline: true
                 }, {
                     name: "Member Count",
-                    value: stockInfo.MemberCount,
+                    value: guild.members.filter(member => !member.user.bot).size,
                     inline: true
                 })
                 .toJSON();
