@@ -5,37 +5,33 @@ const config = JSON.parse(fs.readFileSync("./config.json"));
 const pool = new Pool(config.DBConfig.db);
 
 
-const SendQuery = async (query, params) => {
-    const {rows, fields} = await pool.query(query, params);
-    
-    if (rows != null) {
-        return rows;
-    }
-    
-    console.log("SendQuery", rows, fields)
-
-    return {};
-}
+const sendQuery = (query, params) => pool.query(query, params).then(
+    results => results.rows
+).catch(
+    _err => []
+);
 
 
 module.exports = {
-    GetStockData: async (code, IsInvite) => {
-        let data;
-
-        if (!IsInvite) {
-            data = await SendQuery(
-                "SELECT * FROM stock WHERE id='$1';", 
-                [code]
-            );
-            console.log("GetStockData T", data);
-        } else {
-            data = SendQuery(
-                "SELECT * FROM stock WHERE invite='$1';", 
-                [code]
-            );
-            console.log("GetStockData F", data);
-        }
-
-        return data;
+    GetStockData: (code, IsInvite) => {
+        return new Promise(resolve => {
+            if (!IsInvite) {
+                sendQuery(
+                    "SELECT * FROM stock WHERE id=$1;", 
+                    [code]
+                ).then(data => {
+                    console.log("GetStockData", data)
+                    resolve(data[0]);
+                });
+            } else {
+                sendQuery(
+                    "SELECT * FROM stock WHERE invite=$1;", 
+                    [code]
+                ).then(data => {
+                    console.log("GetStockData", data)
+                    resolve(data[0]);
+                });
+            }
+        });
     }
 };

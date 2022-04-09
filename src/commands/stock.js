@@ -21,10 +21,10 @@ module.exports = {
 
             if (!stringInput.includes("/")) {
                 if (stringInput.includes("$")) {
-                    stockCode = stringInput.replace("$", "").toUpperCase();
+                    stockCode = stringInput.replace("$", "").toLowerCase();
                     stockInfo = await GetStockInfo(stockCode);
                     if (stockInfo === {}) {
-                        return interaction.reply("Sorry, specified stock code was incorrect");
+                        return interaction.reply("Sorry, specified stock code was not found");
                     }
                 } else {
                     return interaction.reply("Sorry, you need to add `$` before your stock code");
@@ -38,13 +38,13 @@ module.exports = {
             }
 
             guild = FindGuild(stockInfo.GuildID);
-            if (guild === {}) {
-                return interaction.reply("Sorry, specified server or stock was deleted");
+            if (guild == undefined) {
+                return interaction.reply("Sorry, specified stock code was not found");
             }
             
             const stockEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
-                .setTitle(`Stock info for $${stockCode}`)
+                .setTitle(`Stock info for $${stockCode.toUpperCase()}`)
                 .setThumbnail(guild.iconURL())
                 //.setDescription(`[Click here for invite Link](${stockInfo.Invite})`)
                 .addFields({
