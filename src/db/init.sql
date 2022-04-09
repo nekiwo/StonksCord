@@ -1,10 +1,9 @@
-CREATE SEQUENCE stock_seq
-
 CREATE TABLE stock (
-    id text PRIMARY KEY,
+    id text PRIMARY KEY UNIQUE,
     guild_id bigint UNIQUE,
     invite text UNIQUE,
-    total_shares int,
-    cost int,
-    market_cap bigint
+    total_shares int[],
+    price int[],
+    market_cap bigint[]
+    change_time bigint[]
 );

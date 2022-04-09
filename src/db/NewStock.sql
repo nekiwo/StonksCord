@@ -1,0 +1,2 @@
+INSERT INTO stock
+VALUES ('asdas', 423423, 'sadasd', ARRAY [000, 111, 222], ARRAY [000, 111, 222], ARRAY [000, 111, 222]);

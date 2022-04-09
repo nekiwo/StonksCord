@@ -5,14 +5,20 @@ module.exports = {
         
     },
 
-	GetStockInfo: async (code) => {
-        let data = await GetStockData(code);
+	GetStockInfo: async (code, IsInvite = false) => {
+        let data = await GetStockData(code, IsInvite);
 
-        return {
-            Cost: "111",
-            MarketCap: "222",
-            TotalShares: "333",
-            Invite: "inite"
+        if (data !== {}) {
+            return {
+                ID: data.id,
+                GuildID: data.guild_id,
+                Cost: data.price[data.price.length - 1],
+                MarketCap: data.price[data.market_cap.length - 1],
+                TotalShares: data.price[data.total_shares.length - 1],
+                Invite: data.invite
+            };
+        } else {
+            return {};
         }
     }
 };

@@ -11,23 +11,30 @@ const SendQuery = async (query, params) => {
     if (rows != null) {
         return rows;
     }
+    
+    console.log("SendQuery", rows, fields)
 
-    return [];
+    return {};
 }
 
 
 module.exports = {
-    GetStockData: async (code) => {
-        const data = SendQuery(
-            "SELECT * FROM stock WHERE id=$1;", 
-            [code]
-        );
+    GetStockData: async (code, IsInvite) => {
+        let data;
 
-        if (data === []) {
-            
+        if (!IsInvite) {
+            data = await SendQuery(
+                "SELECT * FROM stock WHERE id='$1';", 
+                [code]
+            );
+            console.log("GetStockData T", data);
+        } else {
+            data = SendQuery(
+                "SELECT * FROM stock WHERE invite='$1';", 
+                [code]
+            );
+            console.log("GetStockData F", data);
         }
-
-        console.log(data);
 
         return data;
     }
