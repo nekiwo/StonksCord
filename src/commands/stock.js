@@ -20,11 +20,15 @@ module.exports = {
             let stockInfo;
 
             if (!stringInput.includes("/")) {
-                if (stringInput.includes("$")) {
-                    stockCode = stringInput.replace("$", "").toLowerCase();
-                    stockInfo = await GetStockInfo(stockCode);
-                    if (stockInfo === {}) {
-                        return interaction.reply("Sorry, specified stock code was not found");
+                if (stringInput[0] === "$") {
+                    if (stringInput.length < 6) {
+                        stockCode = stringInput.replace("$", "").toLowerCase();
+                        stockInfo = await GetStockInfo(stockCode);
+                        if (stockInfo === {}) {
+                            return interaction.reply("Sorry, specified stock code was not found");
+                        }
+                    } else {
+                        return interaction.reply("Sorry, specified stock code was too long (and wrong)");
                     }
                 } else {
                     return interaction.reply("Sorry, you need to add `$` before your stock code");
