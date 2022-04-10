@@ -1,6 +1,6 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetStockInfo} = require("../StocksAPI");
+const {GetStockInfo, UpdateStock} = require("../StocksAPI");
 const {FindGuild} = require("../helpers");
 
 module.exports = {
@@ -45,6 +45,8 @@ module.exports = {
             if (guild == undefined) {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
+
+            UpdateStock(stockCode);
             
             const stockEmbed = new MessageEmbed()
                 .setColor("#03fc5e")

@@ -2,6 +2,8 @@ const { Collection } = require("discord.js");
 const {client} = require("./index");
 
 module.exports = {
+    CalculatePrice: (members, shares) => members + shares * 0.1,
+
 	InviteToGuild: (invite) => {
         client.guilds.cache.forEach(guild => {
             guild.invites.fetch().then(inviteObjs => { 
