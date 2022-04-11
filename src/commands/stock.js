@@ -23,7 +23,7 @@ module.exports = {
                 if (stringInput[0] === "$") {
                     if (stringInput.length < 6) {
                         stockCode = stringInput.replace("$", "").toLowerCase();
-                        stockInfo = await GetStockInfo(stockCode);
+                        stockInfo = await GetStockInfo(stockCode, false);
                         if (stockInfo === {}) {
                             return interaction.reply("Sorry, specified stock code was not found");
                         }
@@ -46,7 +46,8 @@ module.exports = {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
 
-            UpdateStock(stockCode);
+            let memberCount = guild.members.cache.filter(member => !member.user.bot).size;
+            UpdateStock(stockCode, memberCount, stockInfo.TotalShares);
             
             const stockEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
@@ -71,7 +72,7 @@ module.exports = {
                     inline: true
                 }, {
                     name: "Member Count",
-                    value: guild.members.cache.filter(member => !member.user.bot).size.toString(),
+                    value: memberCount.toString(),
                     inline: true
                 })
                 .toJSON();
