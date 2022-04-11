@@ -1,7 +1,8 @@
-const {MessageEmbed} = require("discord.js") 
+const {MessageEmbed, MessageActionRow, MessageButton} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStock} = require("../StocksAPI");
 const {FindGuild} = require("../helpers");
+const {client} = require("../index");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -48,6 +49,8 @@ module.exports = {
 
             let memberCount = guild.members.cache.filter(member => !member.user.bot).size;
             UpdateStock(stockCode, memberCount, stockInfo.TotalShares);
+
+            let tom = Date.now()
             
             const stockEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
@@ -77,7 +80,32 @@ module.exports = {
                 })
                 .toJSON();
 
-            return interaction.reply({embeds: [stockEmbed]});
+            const row = new MessageActionRow()
+                .addComponents(
+                    new MessageButton()
+                        .setCustomId('{}{}{}[][][""""]')
+                        .setLabel('test button')
+                        .setStyle('PRIMARY'),
+                );
+
+            client.on('interactionCreate', async interaction => {
+                if (!interaction.isButton()) return;
+
+                console.log(interaction.customId)
+
+                const chartStock = "[test]".toUpperCase();
+                const chartTime = "[test]";
+                
+                const chartEmbed = new MessageEmbed()
+                    .setColor("#03fc5e")
+                    .setTitle(`Stock chart for $${chartStock}`)
+                    .setDescription(`Past ${chartTime}`)
+                    .toJSON();
+
+                return interaction.reply({embeds: [chartEmbed]});
+            });
+            
+            return interaction.reply({embeds: [stockEmbed], components: [row]});
         }
 	},
 };
