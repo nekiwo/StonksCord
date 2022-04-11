@@ -26,6 +26,10 @@ module.exports = {
         });
     },
 
+    GetStocksList: () => {
+        
+    },
+
     UpdateStock: (code, members, shares) => {
         GetStockData(code, false).then(data => {
             // Check if 10 minutes have passed
