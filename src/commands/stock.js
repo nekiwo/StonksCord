@@ -4,6 +4,8 @@ const {GetStockInfo, UpdateStock} = require("../StocksAPI");
 const {FindGuild} = require("../helpers");
 const {client} = require("../index");
 
+let lastBtnPressTime = 0;
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("stock")
@@ -80,32 +82,82 @@ module.exports = {
                 })
                 .toJSON();
 
-            const row = new MessageActionRow()
+            const showGraphBtn = new MessageActionRow()
                 .addComponents(
                     new MessageButton()
-                        .setCustomId('{}{}{}[][][""""]')
-                        .setLabel('test button')
-                        .setStyle('PRIMARY'),
+                        .setCustomId(JSON.stringify({
+                            "func": "ChooseTime",
+                            "stock": stockCode
+                        }))
+                        .setLabel("Show Charts")
+                        .setStyle("PRIMARY")
                 );
 
-            client.on('interactionCreate', async interaction => {
-                if (!interaction.isButton()) return;
+            client.on("interactionCreate", async i => {
+                if (!i.isButton()) return;
 
-                console.log(interaction.customId)
+                const data = JSON.parse(i.customId);
+                console.log(i.customId)
 
-                const chartStock = "[test]".toUpperCase();
-                const chartTime = "[test]";
-                
-                const chartEmbed = new MessageEmbed()
-                    .setColor("#03fc5e")
-                    .setTitle(`Stock chart for $${chartStock}`)
-                    .setDescription(`Past ${chartTime}`)
-                    .toJSON();
+                switch (data.func) {
+                    case "ChooseTime":
+                        const selectTimeBtn = new MessageActionRow()
+                            .addComponents(
+                                new MessageButton()
+                                    .setCustomId(JSON.stringify({
+                                        "func": "RenderChart",
+                                        "stock": stockCode,
+                                        "time": 1,
+                                        "timeLabel": "past day"
+                                    }))
+                                    .setLabel("Past Day")
+                                    .setStyle("PRIMARY"),
+                                new MessageButton()
+                                    .setCustomId(JSON.stringify({
+                                        "func": "RenderChart",
+                                        "stock": stockCode,
+                                        "time": 7,
+                                        "timeLabel": "past week"
+                                    }))
+                                    .setLabel("Past Week")
+                                    .setStyle("PRIMARY"),
+                                new MessageButton()
+                                    .setCustomId(JSON.stringify({
+                                        "func": "RenderChart",
+                                        "stock": stockCode,
+                                        "time": 999,
+                                        "timeLabel": "all time"
+                                    }))
+                                    .setLabel("All Time")
+                                    .setStyle("PRIMARY")
+                            );
 
-                return interaction.reply({embeds: [chartEmbed]});
+                        return i.update({components: [selectTimeBtn]});
+                        break;
+                    case "RenderChart": 
+                        let now = Date.now();
+
+                        // Prevent user from spamming the button more than once 3 seconds
+                        if (now - lastBtnPressTime > 3000) {
+                            lastBtnPressTime = now;
+
+                            const chartEmbed = new MessageEmbed()
+                                .setColor("#03fc5e")
+                                .setTitle(`Stock chart for $${data.stock.toUpperCase()}`)
+                                .setDescription(`Shown: past ${data.timeLabel}`)
+                                .toJSON();
+    
+                            return i.reply({embeds: [chartEmbed]});
+                        } else {
+                            return i.reply({content: "Stop spamming the buttons!"});
+                        }
+
+                        break;
+                }
+            
             });
             
-            return interaction.reply({embeds: [stockEmbed], components: [row]});
+            return interaction.reply({embeds: [stockEmbed], components: [showGraphBtn]});
         }
 	},
 };
