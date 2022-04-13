@@ -51,9 +51,9 @@ module.exports = {
 
         sendQuery(
             `UPDATE stocks 
-             SET time_stamp = array_append(time_stamp, $1)
-             WHERE id = $2;`,
-            [Date.now(), code]
+             SET time_stamps = array_append(time_stamps, CURRENT_TIMESTAMP)
+             WHERE id = $1;`,
+            [code]
         );
     }
 };

@@ -1,10 +1,8 @@
-const {MessageEmbed, MessageActionRow, MessageButton} = require("discord.js") 
+const {MessageEmbed, MessageActionRow, MessageButton, MessageAttachment} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStock} = require("../StocksAPI");
-const {FindGuild} = require("../helpers");
+const {FindGuild, RenderChart} = require("../helpers");
 const {client} = require("../index");
-
-let lastBtnPressTime = 0;
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -54,7 +52,7 @@ module.exports = {
 
             let tom = Date.now()
             
-            const stockEmbed = new MessageEmbed()
+            let stockEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
                 .setTitle(`Stock info for $${stockCode.toUpperCase()}`)
                 .setThumbnail(guild.iconURL())
@@ -79,8 +77,7 @@ module.exports = {
                     name: "Member Count",
                     value: memberCount.toString(),
                     inline: true
-                })
-                .toJSON();
+                });
 
             const showGraphBtn = new MessageActionRow()
                 .addComponents(
@@ -101,7 +98,7 @@ module.exports = {
 
                 switch (data.func) {
                     case "ChooseTime":
-                        const selectTimeBtn = new MessageActionRow()
+                        const selectTimeBtns = new MessageActionRow()
                             .addComponents(
                                 new MessageButton()
                                     .setCustomId(JSON.stringify({
@@ -132,32 +129,28 @@ module.exports = {
                                     .setStyle("PRIMARY")
                             );
 
-                        return i.update({components: [selectTimeBtn]});
+                        return i.update({components: [selectTimeBtns]});
                         break;
-                    case "RenderChart": 
-                        let now = Date.now();
-
-                        // Prevent user from spamming the button more than once 3 seconds
-                        if (now - lastBtnPressTime > 3000) {
-                            lastBtnPressTime = now;
-
-                            const chartEmbed = new MessageEmbed()
-                                .setColor("#03fc5e")
-                                .setTitle(`Stock chart for $${data.stock.toUpperCase()}`)
-                                .setDescription(`Shown: past ${data.timeLabel}`)
-                                .toJSON();
-    
-                            return i.reply({embeds: [chartEmbed]});
-                        } else {
-                            return i.reply({content: "Stop spamming the buttons!"});
-                        }
-
+                    case "RenderChart":
+                        RenderChart(code, data.time).then(imgName => {
+                            stockEmbed
+                                .attachFiles(
+                                    new MessageAttachment(`./img/${imgName}`, "imgName")
+                                )
+                                .setImage(`attachment://${imgName}`);
+                            return i.update({embeds: [stockEmbed.toJSON()]});
+                        }).catch(err => {
+                            console.error(err);
+                            stockEmbed.setImage("https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart");
+                            return i.update({embeds: [stockEmbed.toJSON()]});
+                        });
+                        
                         break;
                 }
             
             });
             
-            return interaction.reply({embeds: [stockEmbed], components: [showGraphBtn]});
+            return interaction.reply({embeds: [stockEmbed.toJSON()], components: [showGraphBtn]});
         }
 	},
 };

@@ -1,4 +1,4 @@
-const { Collection } = require("discord.js");
+const {Collection} = require("discord.js");
 const {client} = require("./index");
 
 module.exports = {
@@ -21,5 +21,22 @@ module.exports = {
 
     FindGuild: (id) => {
         return client.guilds.cache.get(id);
+    },
+
+    RenderChart: (code, days) => {
+        // check if image already exists
+        // render one if not
+
+        /* 
+         * naming scheme: test7d1649812800000t.png
+         *  - stock: test
+         *  - timeframe: 7 days
+         *  - time of render: 1649812800000 [unix epoch to the 10 minute precision]
+         * 
+         * calculate 10 minute precision:
+         * - var epoch = unix epoch time in milliseconds 
+         * - epoch - epoch % 600000
+         * 
+         */
     }
 };

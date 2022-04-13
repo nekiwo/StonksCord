@@ -2,10 +2,6 @@ const {GetStockData, UpdateStockData} = require("./db/db");
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
-    GuildToStockCode: (code) => {
-        
-    },
-
 	GetStockInfo: async (code, IsInvite) => {
         return new Promise(resolve => {
             GetStockData(code, IsInvite).then(data => {
@@ -26,6 +22,10 @@ module.exports = {
         });
     },
 
+    GetStockOverTime: () => {
+        
+    },
+
     GetStocksList: () => {
         
     },
@@ -33,7 +33,7 @@ module.exports = {
     UpdateStock: (code, members, shares) => {
         GetStockData(code, false).then(data => {
             // Check if 10 minutes have passed
-            if (Date.now() - 600000 > Number(data.time_stamp.at(-1))) {
+            if (Date.now() - 600000 > new Date(data.time_stamps.at(-1)).valueOf()) {
                 UpdateStockData(code, members, shares);
             }
         });
