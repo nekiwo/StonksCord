@@ -1,0 +1,2 @@
+INSERT INTO stocks
+VALUES (546463211675844653, 2312, ARRAY ['test 23', 'tsla 53', 'msft 12']);

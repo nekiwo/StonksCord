@@ -6,3 +6,9 @@ CREATE TABLE stocks (
     total_shares int[],
     time_stamps timestamp without time zone[]
 );
+
+CREATE TABLE users (
+    id bigint PRIMARY KEY UNIQUE,
+    balance int,
+    stocks text[] -- ['test 54']
+);
