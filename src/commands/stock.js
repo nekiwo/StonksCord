@@ -59,15 +59,15 @@ module.exports = {
                 //.setDescription(`[Click here for invite Link](${stockInfo.Invite})`)
                 .addFields({
                     name: "Stonk Price",
-                    value: stockInfo.Cost,
+                    value: stockInfo.Price.toString(),
                     inline: true
                 }, {
                     name: "Market Cap",
-                    value: stockInfo.MarketCap,
+                    value: stockInfo.MarketCap.toString(),
                     inline: true
                 }, {
                     name: "Total Shares",
-                    value: stockInfo.TotalShares,
+                    value: stockInfo.TotalShares.toString(),
                     inline: true
                 }, {
                     name: "Server",
