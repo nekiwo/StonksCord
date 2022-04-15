@@ -1,4 +1,4 @@
-const {GetStockData, UpdateStockData} = require("./db/db");
+const {GetStockData, UpdateStockData, GetUserData} = require("./db/db");
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
@@ -10,9 +10,9 @@ module.exports = {
                     resolve({
                         ID: data.id,
                         GuildID: data.guild_id,
-                        Cost: price.toString(),
-                        MarketCap: (data.total_shares.at(-1) * price).toString(), // Probably unefficient with larger arrays (5k+ items)
-                        TotalShares: data.total_shares.at(-1).toString(),
+                        Price: price,
+                        MarketCap: (data.total_shares.at(-1) * price), // Probably unefficient with larger arrays (5k+ items)
+                        TotalShares: data.total_shares.at(-1),
                         Invite: data.invite
                     });
                 } else {
@@ -37,5 +37,41 @@ module.exports = {
                 UpdateStockData(code, members, shares);
             }
         });
-    }
+    },
+
+    GetUserInfo: async (id) => {
+        return new Promise(resolve => {
+            GetUserData(id).then(data => {
+                if (data != undefined) {
+                    let stocks = [];
+                    let worth = 0;
+                    data.stocks.forEach(async rawStockData => {
+                        let stock = rawStockData.split(" ")[0];
+                        let shares = Number(rawStockData.split(" ")[1]);
+                        let stockInfo = await GetStockInfo(stock, false);
+                        
+                        if (stockInfo !== {}) {
+                            let stockWorth = shares * stockInfo.Price;
+                            worth += stockWorth;
+                            stocks.push({
+                                stock: stock,
+                                shares: shares,
+                                price: stockInfo.Price,
+                                worth: stockWorth
+                            })
+                        }
+                    });
+
+                    resolve({
+                        ID: data.id,
+                        Balance: data.balance,
+                        Worth: Math.round(worth),
+                        Stocks: stocks,
+                    });
+                } else {
+                    resolve({});
+                }
+            });
+        });
+    },
 };
