@@ -55,5 +55,16 @@ module.exports = {
              WHERE id = $1;`,
             [code]
         );
+    },
+
+    GetUserData: (id) => {
+        return new Promise(resolve => {
+            sendQuery(
+                "SELECT * FROM users WHERE id = $1;", 
+                [id]
+            ).then(data => {
+                resolve(data[0]);
+            });
+        });
     }
 };
