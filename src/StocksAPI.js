@@ -74,4 +74,40 @@ module.exports = {
             });
         });
     },
+
+    CreateUser: async (id) => {
+        return new Promise(resolve => {
+            GetUserData(id).then(data => {
+                if (data != undefined) {
+                    let stocks = [];
+                    let worth = 0;
+                    data.stocks.forEach(async rawStockData => {
+                        let stock = rawStockData.split(" ")[0];
+                        let shares = Number(rawStockData.split(" ")[1]);
+                        let stockInfo = await GetStockInfo(stock, false);
+                        
+                        if (stockInfo !== {}) {
+                            let stockWorth = shares * stockInfo.Price;
+                            worth += stockWorth;
+                            stocks.push({
+                                stock: stock,
+                                shares: shares,
+                                price: stockInfo.Price,
+                                worth: stockWorth
+                            })
+                        }
+                    });
+
+                    resolve({
+                        ID: data.id,
+                        Balance: data.balance,
+                        Worth: Math.round(worth),
+                        Stocks: stocks,
+                    });
+                } else {
+                    resolve({});
+                }
+            });
+        });
+    }
 };
