@@ -1,11 +1,11 @@
-const {GetStockData, UpdateStockData, GetUserData} = require("./db/db");
+const {GetStockData, UpdateStockData, GetUserData, CreateUserData} = require("./db/db");
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
 	GetStockInfo: async (code, IsInvite) => {
         return new Promise(resolve => {
             GetStockData(code, IsInvite).then(data => {
-                if (data != undefined) {
+                if (data != {undefined}) {
                     let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1));
                     resolve({
                         ID: data.id,
@@ -54,7 +54,7 @@ module.exports = {
                             let stockWorth = shares * stockInfo.Price;
                             worth += stockWorth;
                             stocks.push({
-                                stock: stock,
+                                id: stock,
                                 shares: shares,
                                 price: stockInfo.Price,
                                 worth: stockWorth
@@ -65,49 +65,18 @@ module.exports = {
                     resolve({
                         ID: data.id,
                         Balance: data.balance,
-                        Worth: Math.round(worth),
+                        Worth: Math.round(worth) + data.balance,
                         Stocks: stocks,
                     });
                 } else {
-                    resolve({});
+                    resolve(0);
                 }
             });
         });
     },
 
-    CreateUser: async (id) => {
-        return new Promise(resolve => {
-            GetUserData(id).then(data => {
-                if (data != undefined) {
-                    let stocks = [];
-                    let worth = 0;
-                    data.stocks.forEach(async rawStockData => {
-                        let stock = rawStockData.split(" ")[0];
-                        let shares = Number(rawStockData.split(" ")[1]);
-                        let stockInfo = await GetStockInfo(stock, false);
-                        
-                        if (stockInfo !== {}) {
-                            let stockWorth = shares * stockInfo.Price;
-                            worth += stockWorth;
-                            stocks.push({
-                                stock: stock,
-                                shares: shares,
-                                price: stockInfo.Price,
-                                worth: stockWorth
-                            })
-                        }
-                    });
-
-                    resolve({
-                        ID: data.id,
-                        Balance: data.balance,
-                        Worth: Math.round(worth),
-                        Stocks: stocks,
-                    });
-                } else {
-                    resolve({});
-                }
-            });
-        });
+    CreateUser: (id) => {
+        console.log("create ", id)
+        CreateUserData(id);
     }
 };
