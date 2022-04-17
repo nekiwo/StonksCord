@@ -1,6 +1,6 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetUserInfo} = require("../StocksAPI");
+const {GetUserInfo, CreateUser} = require("../StocksAPI");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,30 +9,58 @@ module.exports = {
 	async execute(interaction) {
         if (interaction) {
             let userInfo = await GetUserInfo(interaction.user.id);
+            let userEmbed;
 
-            if (userInfo !== {}) {
-                console.log(userInfo)
+            console.log(interaction.user.id);
 
-                let userEmbed = new MessageEmbed()
+            let stockListString = "";
+            if (userInfo.Stocks.length > 0) {
+                userInfo.Stocks.forEach(stock => {
+                    stockListString = stockListString + `$${stock.id} - ${stock.shares} (${stock.worth}$)\n`;
+                });
+            } else {
+                stockListString = "NONE";
+            }
+
+            if (userInfo != 0) {
+                userEmbed = new MessageEmbed()
                     .setColor("#03fc5e")
                     .setTitle(`User info for @${interaction.user.username}`)
+                    .setThumbnail(interaction.user.displayAvatarURL())
                     .addFields({
                         name: "Balance",
-                        value: userInfo.Balance.toString(),
+                        value: userInfo.Balance.toString() + "$",
                         inline: true
                     }, {
                         name: "Worth",
-                        value: stockInfo.MarketCap.toString(),
+                        value: userInfo.Worth.toString() + "$",
                         inline: true
                     }, {
                         name: "List of Stocks",
-                        value: "$TEST - 23 shares (4354$)\n$TEST - 23 shares (4354$)"
+                        value: stockListString
                     });
-            
-                return interaction.reply({embeds: [userEmbed.toJSON()]});
             } else {
-                // create user
+                CreateUser(interaction.user.id);
+
+                userEmbed = new MessageEmbed()
+                    .setColor("#03fc5e")
+                    .setTitle(`User info for @${interaction.user.username}`)
+                    .setThumbnail(interaction.user.displayAvatarURL())
+                    .addFields({
+                        name: "Balance",
+                        value: "100$",
+                        inline: true
+                    }, {
+                        name: "Worth",
+                        value: "100$",
+                        inline: true
+                    }, {
+                        name: "List of Stocks",
+                        value: "NONE"
+                    });
             }
+            
+            return interaction.reply({embeds: [userEmbed.toJSON()]});
         }
 	},
 };
