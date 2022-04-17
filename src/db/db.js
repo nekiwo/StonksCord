@@ -32,9 +32,12 @@ module.exports = {
             }
         });
     },
+
+    CreateStockData: (id, guildId, members) => {
+
+    },
     
     UpdateStockData: (code, members, shares) => {
-        console.log("update")
         sendQuery(
             `UPDATE stocks 
              SET members = array_append(members, $1)
@@ -51,7 +54,7 @@ module.exports = {
 
         sendQuery(
             `UPDATE stocks 
-             SET time_stamps = array_append(time_stamps, CURRENT_TIMESTAMP)
+             SET time_stamps = array_append(time_stamps, NOW()::timestamp)
              WHERE id = $1;`,
             [code]
         );
@@ -66,5 +69,17 @@ module.exports = {
                 resolve(data[0]);
             });
         });
+    },
+
+    CreateUserData: (id) => {
+        sendQuery(
+            `INSERT INTO users
+            VALUES ($1, 100, ARRAY[]::text[]);`,
+            [id]
+        );
+    },
+
+    UpdateUserData: (id) => {
+        
     }
 };
