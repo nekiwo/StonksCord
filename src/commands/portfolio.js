@@ -63,4 +63,4 @@ module.exports = {
             return interaction.reply({embeds: [userEmbed.toJSON()]});
         }
 	},
-};
+}
