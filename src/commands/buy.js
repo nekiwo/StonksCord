@@ -5,7 +5,7 @@ const {FindGuild} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName("buy")
+		.setName("buydfssdf")
 		.setDescription("Buy a stock")
         .addStringOption(option => 
                 option.setName("code")
@@ -17,7 +17,7 @@ module.exports = {
             .setName('amount')
             .setDescription('The amount of stock to buy (defaults to 1)')
         ),
-	async execute(interaction) {
+	async execute(interaction, client) {
         if (interaction) {
             const stringInput = interaction.options.getString("code");
             let amount;
@@ -54,7 +54,7 @@ module.exports = {
                 stockCode = stockInfo.ID;
             }
 
-            guild = FindGuild(stockInfo.GuildID);
+            guild = FindGuild(stockInfo.GuildID, client);
             if (guild == undefined) {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
