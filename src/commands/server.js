@@ -11,14 +11,14 @@ module.exports = {
             option.setName("code")
                 .setDescription("Stock code or server link")
                 .setRequired(true)),
-	async execute(interaction) {
+	async execute(interaction, client) {
         if (interaction) {
             const stringInput = interaction.options.getString("code");
             console.log(stringInput)
 
             let guild;
 
-            guild = InviteToGuild(stringInput.substring(stringInput.lastIndexOf("/") + 1));
+            guild = InviteToGuild(stringInput.substring(stringInput.lastIndexOf("/") + 1), client);
             console.log(guild)
 
             const embed = new MessageEmbed()
