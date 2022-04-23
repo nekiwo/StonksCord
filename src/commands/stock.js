@@ -1,8 +1,7 @@
 const {MessageEmbed, MessageActionRow, MessageButton, MessageAttachment} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetStockInfo, UpdateStock} = require("../StocksAPI");
+const {GetStockInfo, UpdateStockInfo} = require("../StocksAPI");
 const {FindGuild, RenderChart} = require("../helpers");
-const {client} = require("../index");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,7 +11,7 @@ module.exports = {
             option.setName("code")
                 .setDescription("Stock code or server link")
                 .setRequired(true)),
-	async execute(interaction) {
+	async execute(interaction, client) {
         if (interaction) {
             const stringInput = interaction.options.getString("code");
 
@@ -42,13 +41,13 @@ module.exports = {
                 stockCode = stockInfo.ID;
             }
 
-            guild = FindGuild(stockInfo.GuildID);
+            guild = FindGuild(stockInfo.GuildID, client);
             if (guild == undefined) {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
 
             let memberCount = guild.members.cache.filter(member => !member.user.bot).size;
-            UpdateStock(stockCode, memberCount, stockInfo.TotalShares);
+            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares);
 
             let tom = Date.now()
             
