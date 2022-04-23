@@ -1,6 +1,6 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetUserInfo, CreateUser} = require("../StocksAPI");
+const {GetUserInfo, CreateUserInfo} = require("../StocksAPI");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,8 +10,6 @@ module.exports = {
         if (interaction) {
             let userInfo = await GetUserInfo(interaction.user.id);
             let userEmbed;
-
-            console.log(interaction.user.id);
 
             let stockListString = "";
             if (userInfo.Stocks.length > 0) {
@@ -40,7 +38,7 @@ module.exports = {
                         value: stockListString
                     });
             } else {
-                CreateUser(interaction.user.id);
+                CreateUserInfo(interaction.user.id);
 
                 userEmbed = new MessageEmbed()
                     .setColor("#03fc5e")
