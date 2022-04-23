@@ -13,9 +13,9 @@ const sendQuery = (query, params) => pool.query(query, params).then(
 
 
 module.exports = {
-    GetStockData: (code, IsInvite) => {
+    GetStockData: (code, isInvite) => {
         return new Promise(resolve => {
-            if (!IsInvite) {
+            if (!isInvite) {
                 sendQuery(
                     "SELECT * FROM stocks WHERE id = $1;", 
                     [code]
