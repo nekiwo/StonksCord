@@ -11,11 +11,11 @@ module.exports = {
                 .setDescription("Stock code for your server")),
 	async execute(interaction, client) {
         if (interaction) {
-            const code = interaction.options.getString("code").toLowerCase();
+            const code = interaction.options.getString("code");
 
             if (interaction.user.hasPermission("ADMINISTRATOR")) {
                 if (code !== undefined) {
-                    if (1 < code.length && code.length < 5 && /^[a-z]+$/.test(code)) {
+                    if (1 < code.length && code.length < 5 && /^[a-z]+$/i.test(code)) {
                         let stock = await GetStockInfo(code, false);
                         console.log(stock);
                         if (stock === {}) {
