@@ -2,9 +2,9 @@ const {GetStockData, UpdateStockData, GetUserData, CreateUserData} = require("./
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
-	GetStockInfo: async (code, IsInvite) => {
+	GetStockInfo: async (code, isInvite) => {
         return new Promise(resolve => {
-            GetStockData(code, IsInvite).then(data => {
+            GetStockData(code, isInvite).then(data => {
                 if (data != {undefined}) {
                     let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1));
                     resolve({
@@ -30,13 +30,17 @@ module.exports = {
         
     },
 
-    UpdateStock: (code, members, shares) => {
+    UpdateStockInfo: (code, members, shares) => {
         GetStockData(code, false).then(data => {
             // Check if 10 minutes have passed
             if (Date.now() - 600000 > new Date(data.time_stamps.at(-1)).valueOf()) {
                 UpdateStockData(code, members, shares);
             }
         });
+    },
+
+    CreateStockInfo: () => {
+
     },
 
     GetUserInfo: async (id) => {
@@ -75,7 +79,11 @@ module.exports = {
         });
     },
 
-    CreateUser: (id) => {
+    UpdateUserInfo: () => {
+
+    },
+
+    CreateUserInfo: (id) => {
         console.log("create ", id)
         CreateUserData(id);
     }
