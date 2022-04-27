@@ -31,7 +31,7 @@ module.exports = {
     },
 
     UpdateStockInfo: (code, members, shares) => {
-        GetStockData(code, false).then(data => {
+        GetStockData(code, "id").then(data => {
             // Check if 10 minutes have passed since last info update
             if (Date.now() - 600000 > new Date(data.time_stamps.at(-1)).valueOf()) {
                 UpdateStockData(code, members, shares);
