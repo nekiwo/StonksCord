@@ -2,9 +2,9 @@ const {GetStockData, UpdateStockData, CreateStockData, GetUserData, CreateUserDa
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
-	GetStockInfo: async (code, isInvite) => {
+	GetStockInfo: async (value, column) => {
         return new Promise(resolve => {
-            GetStockData(code, isInvite).then(data => {
+            GetStockData(value, column).then(data => {
                 if (data != undefined) {
                     let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1));
                     resolve({
@@ -47,13 +47,9 @@ module.exports = {
             CreateStockData(
                 id,
                 guild.id,
-                invite.code,
-                Number(guild.members.cache.filter(member => !member.user.bot).size)
+                `https://discord.gg/${invite.code}`,
+                guild.members.cache.filter(member => !member.user.bot).size
             );
-            console.log(
-                invite.code,
-                Number(guild.members.cache.filter(member => !member.user.bot).size)
-            )
         }).catch(console.error);
     },
 
@@ -66,7 +62,7 @@ module.exports = {
                     data.stocks.forEach(async rawStockData => {
                         let stock = rawStockData.split(" ")[0];
                         let shares = Number(rawStockData.split(" ")[1]);
-                        let stockInfo = await GetStockInfo(stock, false);
+                        let stockInfo = await GetStockInfo(stock, "id");
                         
                         if (stockInfo !== {}) {
                             let stockWorth = shares * stockInfo.Price;
@@ -98,7 +94,6 @@ module.exports = {
     },
 
     CreateUserInfo: (id) => {
-        console.log("create ", id)
         CreateUserData(id);
     }
 };
