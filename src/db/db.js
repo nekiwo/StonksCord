@@ -13,23 +13,14 @@ const sendQuery = (query, params) => pool.query(query, params).then(
 
 
 module.exports = {
-    GetStockData: (code, isInvite) => {
+    GetStockData: (value, column) => {
         return new Promise(resolve => {
-            if (!isInvite) {
-                sendQuery(
-                    "SELECT * FROM stocks WHERE id = $1;", 
-                    [code]
-                ).then(data => {
-                    resolve(data[0]);
-                });
-            } else {
-                sendQuery(
-                    "SELECT * FROM stocks WHERE invite = $1;", 
-                    [code]
-                ).then(data => {
-                    resolve(data[0]);
-                });
-            }
+            sendQuery(
+                `SELECT * FROM stocks WHERE ${column} = $1;`, 
+                [value]
+            ).then(data => {
+                resolve(data[0]);
+            });
         });
     },
     
@@ -50,7 +41,7 @@ module.exports = {
 
         sendQuery(
             `UPDATE stocks 
-             SET time_stamps = array_append(time_stamps, NOW()::timestamp)
+             SET time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
              WHERE id = $1;`,
             [code]
         );
@@ -59,7 +50,7 @@ module.exports = {
     CreateStockData: (id, guildId, invite, members) => {
         sendQuery(
             `INSERT INTO stocks
-             VALUES ($1, $2, $3, ARRAY [$4], ARRAY [0], ARRAY [NOW()]);`, 
+             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
             [id, guildId, invite, members]
         );
     },
