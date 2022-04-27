@@ -36,7 +36,7 @@ module.exports = {
                 if (stringInput[0] === "$") {
                     if (stringInput.length < 6) {
                         stockCode = stringInput.replace("$", "").toLowerCase();
-                        stockInfo = await GetStockInfo(stockCode);
+                        stockInfo = await GetStockInfo(stockCode, "id");
                         if (stockInfo === {}) {
                             return interaction.reply("Sorry, specified stock code was not found");
                         }
@@ -47,7 +47,7 @@ module.exports = {
                     return interaction.reply("Sorry, you need to add `$` before your stock code");
                 }
             } else {
-                stockInfo = await GetStockInfo(stringInput.substring(stringInput.lastIndexOf("/") + 1), true);
+                stockInfo = await GetStockInfo(stringInput.substring(stringInput.lastIndexOf("/") + 1), "invite");
                 if (stockInfo === {}) {
                     return interaction.reply("Sorry, specified server doesn't have StonksCord invited (Or your link was incorrect)");
                 }
