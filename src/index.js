@@ -36,7 +36,7 @@ client.on("guildCreate", guild => {
 
     channels.first()
         .send("Hello! Start by using the `/help` command. Then, use the `/configure` command in order to put your server on the stonk market")
-        .catch(e => console.log(e));
+        .catch(e => console.error(e));
 });
 
 client.login(Token);
