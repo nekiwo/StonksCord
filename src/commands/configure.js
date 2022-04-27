@@ -1,4 +1,4 @@
-const {MessageEmbed} = require("discord.js") 
+const {MessageEmbed, MessageActionRow, MessageButton, Permissions} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, CreateStockInfo} = require("../StocksAPI");
 
@@ -13,12 +13,11 @@ module.exports = {
         if (interaction) {
             const code = interaction.options.getString("code");
 
-            if (interaction.user.hasPermission("ADMINISTRATOR")) {
-                if (code !== undefined) {
+            if (interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+                if (code != null) {
                     if (1 < code.length && code.length < 5 && /^[a-z]+$/i.test(code)) {
                         let stock = await GetStockInfo(code, false);
-                        console.log(stock);
-                        if (stock === {}) {
+                        if (JSON.stringify(stock) == "{}") {
                             let configEmbed = new MessageEmbed()
                                 .setColor("#03fc5e")
                                 .setTitle(`Are you sure you want to use $${code.toUpperCase()} as an identification code for this server?`)
@@ -57,18 +56,17 @@ module.exports = {
                             client.on("interactionCreate", async i => {
                                 if (!i.isButton()) return;
                     
-                                if (i.user.hasPermission("ADMINISTRATOR")) {
+                                if (i.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
                                     const data = JSON.parse(i.customId);
-                                    console.log(i.customId)
                                     
                                     switch (data.func) {
                                         case "accept":
-                                            //CreateStockInfo();
+                                            CreateStockInfo(code.toLowerCase(), i.guild, i.channel);
     
                                             configEmbed = new MessageEmbed()
                                                 .setColor("#03fc5e")
                                                 .setTitle(`Code set as $${code.toUpperCase()}`);
-                                            return i.update({embeds: [configEmbed.toJSON()]});
+                                            return i.update({embeds: [configEmbed.toJSON()], components: []});
                                             break;
                                         case "cancel":
                                             console.log("delete reply")
@@ -85,7 +83,7 @@ module.exports = {
                             return interaction.reply("Sorry, this code already exists");
                         }
                     } else {
-                        return interaction.reply("Sorry, the code needs to contain 2-4 latin characters");
+                        return interaction.reply("Sorry, the code needs to contain 2-4 Latin characters");
                     }
                 } else {
                     return interaction.reply("You need to enter a 2-4 letter code you wish to use for indetification of your server in the stonk market");
