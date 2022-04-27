@@ -1,11 +1,11 @@
-const {GetStockData, UpdateStockData, GetUserData, CreateUserData} = require("./db/db");
+const {GetStockData, UpdateStockData, CreateStockData, GetUserData, CreateUserData} = require("./db/db");
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
 	GetStockInfo: async (code, isInvite) => {
         return new Promise(resolve => {
             GetStockData(code, isInvite).then(data => {
-                if (data != {undefined}) {
+                if (data != undefined) {
                     let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1));
                     resolve({
                         ID: data.id,
@@ -32,15 +32,29 @@ module.exports = {
 
     UpdateStockInfo: (code, members, shares) => {
         GetStockData(code, false).then(data => {
-            // Check if 10 minutes have passed
+            // Check if 10 minutes have passed since last info update
             if (Date.now() - 600000 > new Date(data.time_stamps.at(-1)).valueOf()) {
                 UpdateStockData(code, members, shares);
             }
         });
     },
 
-    CreateStockInfo: () => {
-
+    CreateStockInfo: (id, guild, channel) => {
+        channel.createInvite({
+            maxAge: 0,
+            maxUses: 0
+        }).then(invite => {
+            CreateStockData(
+                id,
+                guild.id,
+                invite.code,
+                Number(guild.members.cache.filter(member => !member.user.bot).size)
+            );
+            console.log(
+                invite.code,
+                Number(guild.members.cache.filter(member => !member.user.bot).size)
+            )
+        }).catch(console.error);
     },
 
     GetUserInfo: async (id) => {
