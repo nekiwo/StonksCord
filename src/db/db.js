@@ -32,10 +32,6 @@ module.exports = {
             }
         });
     },
-
-    CreateStockData: (id, guildId, members) => {
-
-    },
     
     UpdateStockData: (code, members, shares) => {
         sendQuery(
@@ -60,6 +56,14 @@ module.exports = {
         );
     },
 
+    CreateStockData: (id, guildId, invite, members) => {
+        sendQuery(
+            `INSERT INTO stocks
+             VALUES ($1, $2, $3, ARRAY [$4], ARRAY [0], ARRAY [NOW()]);`, 
+            [id, guildId, invite, members]
+        );
+    },
+
     GetUserData: (id) => {
         return new Promise(resolve => {
             sendQuery(
@@ -71,15 +75,15 @@ module.exports = {
         });
     },
 
+    UpdateUserData: (id) => {
+        
+    },
+
     CreateUserData: (id) => {
         sendQuery(
             `INSERT INTO users
-            VALUES ($1, 100, ARRAY[]::text[]);`,
+             VALUES ($1, 100, ARRAY[]::text[]);`,
             [id]
         );
-    },
-
-    UpdateUserData: (id) => {
-        
     }
 };
