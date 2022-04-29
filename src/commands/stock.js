@@ -7,10 +7,10 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("stock")
 		.setDescription("Info for a specific stock")
-        .addStringOption(option =>
-            option.setName("code")
-                .setDescription("Stock code or server link")
-                .setRequired(true)),
+        .addStringOption(option => option
+            .setName("code")
+            .setDescription("Stock code or server link")
+            .setRequired(true)),
 	async execute(interaction, client) {
         if (interaction) {
             const stringInput = interaction.options.getString("code");
@@ -36,7 +36,7 @@ module.exports = {
             } else {
                 stockInfo = await GetStockInfo(stringInput.substring(stringInput.lastIndexOf("/") + 1), "invite");
                 if (stockInfo === {}) {
-                    return interaction.reply("Sorry, specified server doesn't have StonksCord invited (Or your link was incorrect)");
+                    return interaction.reply("Sorry, specified server doesn't have StonksCord invited (or your link was incorrect)");
                 }
                 stockCode = stockInfo.ID;
             }
@@ -129,7 +129,6 @@ module.exports = {
                             );
 
                         return i.update({components: [selectTimeBtns]});
-                        break;
                     case "RenderChart":
                         RenderChart(code, data.time).then(imgName => {
                             stockEmbed
@@ -143,10 +142,7 @@ module.exports = {
                             stockEmbed.setImage("https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart");
                             return i.update({embeds: [stockEmbed.toJSON()]});
                         });
-                        
-                        break;
                 }
-            
             });
             
             return interaction.reply({embeds: [stockEmbed.toJSON()], components: [showGraphBtn]});
