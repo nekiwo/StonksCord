@@ -11,16 +11,16 @@ module.exports = {
             let userInfo = await GetUserInfo(interaction.user.id);
             let userEmbed;
 
-            let stockListString = "";
-            if (userInfo.Stocks.length > 0) {
-                userInfo.Stocks.forEach(stock => {
-                    stockListString = stockListString + `$${stock.id} - ${stock.shares} (${stock.worth}$)\n`;
-                });
-            } else {
-                stockListString = "NONE";
-            }
-
             if (userInfo != 0) {
+                let stockListString = "";
+                if (userInfo.Stocks.length > 0) {
+                    userInfo.Stocks.forEach(stock => {
+                        stockListString = stockListString + `$${stock.id} - ${stock.shares} shares (${stock.worth}$)\n`;
+                    });
+                } else {
+                    stockListString = "NONE";
+                }
+
                 userEmbed = new MessageEmbed()
                     .setColor("#03fc5e")
                     .setTitle(`User info for @${interaction.user.username}`)
