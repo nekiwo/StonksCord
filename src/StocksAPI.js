@@ -1,4 +1,4 @@
-const {GetStockData, UpdateStockData, CreateStockData, GetUserData, CreateUserData} = require("./db/db");
+const {GetStockData, UpdateStockData, CreateStockData, GetUserData, UpdateUserBalance, UpdateUserStock, UpdateUserStockDelete, CreateUserData} = require("./db/db");
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
@@ -60,15 +60,15 @@ module.exports = {
                     let stocks = [];
                     let worth = 0;
                     data.stocks.forEach(async rawStockData => {
-                        let stock = rawStockData.split(" ")[0];
+                        let stockId = rawStockData.split(" ")[0];
                         let shares = Number(rawStockData.split(" ")[1]);
-                        let stockInfo = await GetStockInfo(stock, "id");
+                        let stockInfo = await GetStockInfo(stockId, "id");
                         
                         if (stockInfo !== {}) {
                             let stockWorth = shares * stockInfo.Price;
                             worth += stockWorth;
                             stocks.push({
-                                id: stock,
+                                id: stockId,
                                 shares: shares,
                                 price: stockInfo.Price,
                                 worth: stockWorth
@@ -89,8 +89,12 @@ module.exports = {
         });
     },
 
-    UpdateUserInfo: () => {
-
+    UpdateUserInfo: (id, balance, stock) => {
+        UpdateUserBalance(id, balance);
+        this.GetUserInfo(id).then(userData => {
+            let userStock = userData.Stocks.filter(s => s.name === id);
+            
+        })
     },
 
     CreateUserInfo: (id) => {
