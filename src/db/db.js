@@ -66,7 +66,34 @@ module.exports = {
         });
     },
 
-    UpdateUserData: (id) => {
+    UpdateUserBalance: (id, balance) => {
+        sendQuery(
+            `UPDATE users
+             SET balance = $2
+             WHERE id = $1;`,
+            [id, balance]
+        );
+    },
+
+    UpdateUserStock: (id, stock, isExist) => {
+        if (isExist) {
+            sendQuery(
+                "SELECT * FROM users WHERE id = $1;", 
+                [id]
+            ).then(data => {
+                data[0]
+            });
+        } else {
+            sendQuery(
+                `UPDATE stocks 
+                 SET stocks = array_append(stocks, $2)
+                 WHERE id = $1;`,
+                [id, stock]
+            );
+        }
+    },
+
+    UpdateUserStockDelete: (id, stock) => {
         
     },
 
