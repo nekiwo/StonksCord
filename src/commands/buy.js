@@ -1,31 +1,28 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetStockInfo} = require("../StocksAPI");
+const {GetStockInfo, UpdateStockInfo, GetUserInfo, UpdateUserInfo} = require("../StocksAPI");
 const {FindGuild} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName("buydfssdf")
+		.setName("buy")
 		.setDescription("Buy a stock")
-        .addStringOption(option => 
-                option.setName("code")
-                    .setDescription("Stock code or server link")
-                    .setRequired(true)
+        .addStringOption(option => option
+            .setName("code")
+            .setDescription("Stock code or server link")
+            .setRequired(true)
         )
-        .addIntegerOption(option => 
-            option
-            .setName('amount')
-            .setDescription('The amount of stock to buy (defaults to 1)')
+        .addIntegerOption(option => option
+            .setName("amount")
+            .setDescription("The amount of stock to buy (defaults to 1)")
         ),
 	async execute(interaction, client) {
         if (interaction) {
-            const stringInput = interaction.options.getString("code");
-            let amount;
-            if(interaction.options.getString("amount") == "") {
+            const code = interaction.options.getString("code");
+            
+            let amount = interaction.options.getString("amount");
+            if (amount == null) {
                 amount = 1;
-            }
-            else {
-                amount = interaction.options.getString("amount");
             }
 
             let guild;
@@ -49,7 +46,7 @@ module.exports = {
             } else {
                 stockInfo = await GetStockInfo(stringInput.substring(stringInput.lastIndexOf("/") + 1), "invite");
                 if (stockInfo === {}) {
-                    return interaction.reply("Sorry, specified server doesn't have StonksCord invited (Or your link was incorrect)");
+                    return interaction.reply("Sorry, specified server doesn't have StonksCord invited (or your link was incorrect)");
                 }
                 stockCode = stockInfo.ID;
             }
@@ -59,22 +56,37 @@ module.exports = {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
 
-            // todo, actually interact with database
-            // check if user has enough money
-            // else, 
-            // return interaction.reply("You do not have enough money to buy ${amount} of these stocks!");
-            // check other stuff that needs to be checked for them to be able to buy a stock
-            // buy the stock
-            
-            const replyEmbed = new MessageEmbed()
-                .setColor("#03fc5e")
-                .setTitle(`Stock info for $${stockCode.toUpperCase()}`)
-                .setThumbnail(guild.iconURL())
-                .setDescription(`You bought ${amount} stocks in $${stockCode.toUpperCase()}`)
-                .setFooter({ text: "(No you didn't, the command doesn't actually work yet)" })
-                .toJSON();
+            let userInfo = await GetUserInfo(interaction.user.id);
+            if (userInfo == 0) {
+                return interaction.reply("Check your portfolio before making your first buy");
+            }
 
-            return interaction.reply({embeds: [replyEmbed]});
+            if (userInfo.Balance <= amount * stockInfo.Price + 1) {
+                return interaction.reply(
+                    `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}\n
+                     You have: ${userInfo.Balance}\n
+                     It costs: ${amount * stockInfo.Price + 1}\n
+                     You need: ${amount * stockInfo.Price + 1 - userInfo.Balance} more`
+                );
+            } else {
+                UpdateUserInfo(
+                    id,
+                    userInfo.Balance - (amount * stockInfo.Price + 1),
+                    {
+                        "id": stockCode,
+                        "amount": userInfo.Stocks.filter(s => s.id).shares + amount,
+                        "delete": false
+                    }
+                );
+            }
+            
+            const buyEmbed = new MessageEmbed()
+                .setColor("#03fc5e")
+                .setTitle(`You bought ${amount} shares in $${stockCode.toUpperCase()}`)
+                .setThumbnail(guild.iconURL())
+                .setDescription(`You spent ${amount * stockInfo.Price}$ (+1$ transaction fee) and your current balance is ${userInfo.Balance - (amount * stockInfo.Price + 1)}$`);
+
+            return interaction.reply({embeds: [buyEmbed.toJSON()]});
         }
 	},
 };
