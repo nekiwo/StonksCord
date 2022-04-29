@@ -6,9 +6,9 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("configure")
 		.setDescription("Configure your server as a stock")
-        .addStringOption(option =>
-            option.setName("code")
-                .setDescription("Stock code for your server")),
+        .addStringOption(option => option
+            .setName("code")
+            .setDescription("Stock code for your server")),
 	async execute(interaction, client) {
         if (interaction) {
             const code = interaction.options.getString("code");
