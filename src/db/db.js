@@ -71,21 +71,21 @@ module.exports = {
             `UPDATE users
              SET balance = $2
              WHERE id = $1;`,
-            [id, balance]
+            [id, Math.round(balance)]
         );
     },
 
-    UpdateUserStock: (id, stock, isExist) => {
+    UpdateUserStock: (id, stock, isExist, stockIndex = -1) => {
         if (isExist) {
             sendQuery(
-                "SELECT * FROM users WHERE id = $1;", 
-                [id]
-            ).then(data => {
-                data[0]
-            });
+                `UPDATE users 
+                 SET stocks[$2] = $3
+                 WHERE id = $1;`,
+                [id, stockIndex, stock]
+            );
         } else {
             sendQuery(
-                `UPDATE stocks 
+                `UPDATE users 
                  SET stocks = array_append(stocks, $2)
                  WHERE id = $1;`,
                 [id, stock]
@@ -93,8 +93,13 @@ module.exports = {
         }
     },
 
-    UpdateUserStockDelete: (id, stock) => {
-        
+    DeleteUserStock: (id, stock) => {
+        sendQuery(
+            `UPDATE users 
+             SET stocks = array_remove(stocks, stocks[$2])
+             WHERE id = $1;`,
+            [id, stock]
+        );
     },
 
     CreateUserData: (id) => {

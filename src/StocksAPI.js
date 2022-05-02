@@ -1,4 +1,4 @@
-const {GetStockData, UpdateStockData, CreateStockData, GetUserData, UpdateUserBalance, UpdateUserStock, UpdateUserStockDelete, CreateUserData} = require("./db/db");
+const {GetStockData, UpdateStockData, CreateStockData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData} = require("./db/db");
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
@@ -31,12 +31,7 @@ module.exports = {
     },
 
     UpdateStockInfo: (code, members, shares) => {
-        GetStockData(code, "id").then(data => {
-            // Check if 10 minutes have passed since last info update
-            if (Date.now() - 600000 > new Date(data.time_stamps.at(-1)).valueOf()) {
-                UpdateStockData(code, members, shares);
-            }
-        });
+        UpdateStockData(code, members, shares);
     },
 
     CreateStockInfo: (id, guild, channel) => {
@@ -59,23 +54,27 @@ module.exports = {
                 if (data != undefined) {
                     let stocks = [];
                     let worth = 0;
-                    data.stocks.forEach(async rawStockData => {
+                    data.stocks.forEach(rawStockData => {
                         let stockId = rawStockData.split(" ")[0];
                         let shares = Number(rawStockData.split(" ")[1]);
-                        let stockInfo = await GetStockInfo(stockId, "id");
+                        console.log("t")
+                        module.exports.GetStockInfo(stockId, "id").then(stockInfo => {
+                            console.log(rawStockData, stockInfo)
                         
-                        if (stockInfo !== {}) {
-                            let stockWorth = shares * stockInfo.Price;
-                            worth += stockWorth;
-                            stocks.push({
-                                id: stockId,
-                                shares: shares,
-                                price: stockInfo.Price,
-                                worth: stockWorth
-                            })
-                        }
+                            if (stockInfo != {}) {
+                                let stockWorth = shares * stockInfo.Price;
+                                worth += stockWorth;
+                                stocks.push({
+                                    id: stockId,
+                                    shares: shares,
+                                    price: stockInfo.Price,
+                                    worth: stockWorth
+                                })
+                            }
+                        });
                     });
 
+                    console.log("api", stocks)
                     resolve({
                         ID: data.id,
                         Balance: data.balance,
@@ -90,11 +89,21 @@ module.exports = {
     },
 
     UpdateUserInfo: (id, balance, stock) => {
+        const stockString = `${stock.id} ${stock.shares}`;
         UpdateUserBalance(id, balance);
-        this.GetUserInfo(id).then(userData => {
-            let userStock = userData.Stocks.filter(s => s.name === id);
+        module.exports.GetUserInfo(id).then(userData => {
+            let userStock = userData.Stocks.filter(s => s.id === stock.id);
             
-        })
+            if (!stock.delete) {
+                if (userStock != []) {
+                    UpdateUserStock(id, stockString, true, userData.Stocks.indexOf(userStock));
+                } else {
+                    UpdateUserStock(id, stockString, false);
+                }
+            } else {
+                DeleteUserStock(id, userData.Stocks.indexOf(userStock));
+            }
+        });
     },
 
     CreateUserInfo: (id) => {

@@ -20,7 +20,7 @@ module.exports = {
         if (interaction) {
             const code = interaction.options.getString("code");
             
-            let amount = interaction.options.getString("amount");
+            let amount = interaction.options.getInteger("amount");
             if (amount == null) {
                 amount = 1;
             }
@@ -29,10 +29,10 @@ module.exports = {
             let stockCode;
             let stockInfo;
 
-            if (!stringInput.includes("/")) {
-                if (stringInput[0] === "$") {
-                    if (stringInput.length < 6) {
-                        stockCode = stringInput.replace("$", "").toLowerCase();
+            if (!code.includes("/")) {
+                if (code[0] === "$") {
+                    if (code.length < 6) {
+                        stockCode = code.replace("$", "").toLowerCase();
                         stockInfo = await GetStockInfo(stockCode, "id");
                         if (stockInfo === {}) {
                             return interaction.reply("Sorry, specified stock code was not found");
@@ -44,7 +44,7 @@ module.exports = {
                     return interaction.reply("Sorry, you need to add `$` before your stock code");
                 }
             } else {
-                stockInfo = await GetStockInfo(stringInput.substring(stringInput.lastIndexOf("/") + 1), "invite");
+                stockInfo = await GetStockInfo(code.substring(code.lastIndexOf("/") + 1), "invite");
                 if (stockInfo === {}) {
                     return interaction.reply("Sorry, specified server doesn't have StonksCord invited (or your link was incorrect)");
                 }
@@ -69,15 +69,25 @@ module.exports = {
                      You need: ${amount * stockInfo.Price + 1 - userInfo.Balance} more`
                 );
             } else {
+                let ownedStock = userInfo.Stocks.filter(s => s.id === stockCode);
+                let sharesOwned = 0;
+
+                console.log(ownedStock, ownedStock[0] != undefined)
+                if (ownedStock[0] != undefined) {
+                    sharesOwned = ownedStock[0].shares;
+                }
+
                 UpdateUserInfo(
-                    id,
+                    userInfo.ID,
                     userInfo.Balance - (amount * stockInfo.Price + 1),
                     {
                         "id": stockCode,
-                        "amount": userInfo.Stocks.filter(s => s.id).shares + amount,
+                        "shares": sharesOwned + amount,
                         "delete": false
                     }
                 );
+
+                UpdateStockInfo(stockCode, guild.members.cache.filter(member => !member.user.bot).size, stockInfo.TotalShares + amount)
             }
             
             const buyEmbed = new MessageEmbed()

@@ -12,13 +12,13 @@ module.exports = {
             let userEmbed;
 
             if (userInfo != 0) {
-                let stockListString = "";
+                let stockListString = "NONE";
+                console.log("portfolio", userInfo.Stocks)
                 if (userInfo.Stocks.length > 0) {
+                    console.log(userInfo.Stocks)
                     userInfo.Stocks.forEach(stock => {
                         stockListString = stockListString + `$${stock.id} - ${stock.shares} shares (${stock.worth}$)\n`;
                     });
-                } else {
-                    stockListString = "NONE";
                 }
 
                 userEmbed = new MessageEmbed()
