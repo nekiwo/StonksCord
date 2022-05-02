@@ -69,7 +69,7 @@ module.exports = {
                                     shares: shares,
                                     price: stockInfo.Price,
                                     worth: stockWorth
-                                })
+                                });
                             }
                         });
                     });
