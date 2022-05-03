@@ -72,7 +72,7 @@ module.exports = {
                 let ownedStock = userInfo.Stocks.filter(s => s.id === stockCode);
                 let sharesOwned = 0;
 
-                console.log(ownedStock, ownedStock[0] != undefined)
+                console.log("#4", ownedStock, ownedStock[0] != undefined)
                 if (ownedStock[0] != undefined) {
                     sharesOwned = ownedStock[0].shares;
                 }

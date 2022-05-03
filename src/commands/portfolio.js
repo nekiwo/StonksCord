@@ -13,7 +13,7 @@ module.exports = {
 
             if (userInfo != 0) {
                 let stockListString = "NONE";
-                console.log("portfolio", userInfo.Stocks)
+                console.log("#5", userInfo.Stocks)
                 if (userInfo.Stocks.length > 0) {
                     console.log(userInfo.Stocks)
                     userInfo.Stocks.forEach(stock => {

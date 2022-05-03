@@ -2,8 +2,8 @@ const {GetStockData, UpdateStockData, CreateStockData, GetUserData, UpdateUserBa
 const {CalculatePrice} = require("./helpers");
 
 module.exports = {
-	GetStockInfo: async (value, column) => {
-        return new Promise(resolve => {
+	GetStockInfo: (value, column) => {
+        return new Promise(async resolve => {
             GetStockData(value, column).then(data => {
                 if (data != undefined) {
                     let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1));
@@ -48,43 +48,40 @@ module.exports = {
         }).catch(console.error);
     },
 
-    GetUserInfo: async (id) => {
-        return new Promise(resolve => {
-            GetUserData(id).then(data => {
-                if (data != undefined) {
-                    let stocks = [];
-                    let worth = 0;
-                    data.stocks.forEach(rawStockData => {
-                        let stockId = rawStockData.split(" ")[0];
-                        let shares = Number(rawStockData.split(" ")[1]);
-                        console.log("t")
-                        module.exports.GetStockInfo(stockId, "id").then(stockInfo => {
-                            console.log(rawStockData, stockInfo)
-                        
-                            if (stockInfo != {}) {
-                                let stockWorth = shares * stockInfo.Price;
-                                worth += stockWorth;
-                                stocks.push({
-                                    id: stockId,
-                                    shares: shares,
-                                    price: stockInfo.Price,
-                                    worth: stockWorth
-                                });
-                            }
-                        });
-                    });
+    GetUserInfo: (id) => {
+        return new Promise(async resolve => {
+            const data = await GetUserData(id);
 
-                    console.log("api", stocks)
-                    resolve({
-                        ID: data.id,
-                        Balance: data.balance,
-                        Worth: Math.round(worth) + data.balance,
-                        Stocks: stocks,
-                    });
-                } else {
-                    resolve(0);
+            if (data != undefined) {
+                let stocks = [];
+                let worth = 0;
+
+                for (const rawStockData of data.stocks) {
+                    let stockId = rawStockData.split(" ")[0];
+                    let shares = Number(rawStockData.split(" ")[1]);
+                    let stockInfo = await module.exports.GetStockInfo(stockId, "id");
+                    
+                    if (stockInfo != {}) {
+                        let stockWorth = shares * stockInfo.Price;
+                        worth += stockWorth;
+                        stocks.push({
+                            id: stockId,
+                            shares: shares,
+                            price: stockInfo.Price,
+                            worth: stockWorth
+                        });
+                    }
                 }
-            });
+
+                resolve({
+                    ID: data.id,
+                    Balance: data.balance,
+                    Worth: Math.round(worth) + data.balance,
+                    Stocks: stocks,
+                });
+            } else {
+                resolve(0);
+            }
         });
     },
 
