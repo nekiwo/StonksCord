@@ -72,7 +72,6 @@ module.exports = {
                 let ownedStock = userInfo.Stocks.filter(s => s.id === stockCode);
                 let sharesOwned = 0;
 
-                console.log("#4", ownedStock, ownedStock[0] != undefined)
                 if (ownedStock[0] != undefined) {
                     sharesOwned = ownedStock[0].shares;
                 }
@@ -87,7 +86,7 @@ module.exports = {
                     }
                 );
 
-                UpdateStockInfo(stockCode, guild.members.cache.filter(member => !member.user.bot).size, stockInfo.TotalShares + amount)
+                UpdateStockInfo(stockCode, guild.members.cache.filter(member => !member.user.bot).size, stockInfo.TotalShares + amount);
             }
             
             const buyEmbed = new MessageEmbed()
