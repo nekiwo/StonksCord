@@ -72,11 +72,11 @@ module.exports = {
                         });
                     }
                 }
-
+                console.log(Number(data.balance), worth, worth + Number(data.balance))
                 resolve({
                     ID: data.id,
-                    Balance: data.balance,
-                    Worth: Math.round(worth) + data.balance,
+                    Balance: Number(data.balance),
+                    Worth: worth + Number(data.balance),
                     Stocks: stocks,
                 });
             } else {
