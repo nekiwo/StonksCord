@@ -71,7 +71,7 @@ module.exports = {
             `UPDATE users
              SET balance = $2
              WHERE id = $1;`,
-            [id, Math.round(balance)]
+            [id, balance]
         );
     },
 

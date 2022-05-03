@@ -13,9 +13,8 @@ module.exports = {
 
             if (userInfo != 0) {
                 let stockListString = "NONE";
-                console.log("#5", userInfo.Stocks)
                 if (userInfo.Stocks.length > 0) {
-                    console.log(userInfo.Stocks)
+                    let stockListString = "";
                     userInfo.Stocks.forEach(stock => {
                         stockListString = stockListString + `$${stock.id} - ${stock.shares} shares (${stock.worth}$)\n`;
                     });
