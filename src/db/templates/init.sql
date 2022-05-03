@@ -9,6 +9,6 @@ CREATE TABLE stocks (
 
 CREATE TABLE users (
     id bigint PRIMARY KEY UNIQUE,
-    balance int,
+    balance decimal,
     stocks text[] -- ['test 54']
 );
