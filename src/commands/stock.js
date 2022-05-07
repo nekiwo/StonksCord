@@ -47,7 +47,7 @@ module.exports = {
             }
 
             let memberCount = guild.members.cache.filter(member => !member.user.bot).size;
-            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares);
+            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares, stockInfo.MarketCap);
 
             let tom = Date.now()
             

@@ -6,12 +6,13 @@ module.exports = {
         return new Promise(async resolve => {
             GetStockData(value, column).then(data => {
                 if (data != undefined) {
-                    let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1));
+                    let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1), data.market_cap.at(-1));
+                    console.log(data.market_cap.at(-1))
                     resolve({
                         ID: data.id,
                         GuildID: data.guild_id,
                         Price: price,
-                        MarketCap: (data.total_shares.at(-1) * price), // Probably unefficient with larger arrays (5k+ items)
+                        MarketCap: Number(data.market_cap.at(-1)),
                         TotalShares: data.total_shares.at(-1),
                         Invite: data.invite
                     });
@@ -30,8 +31,8 @@ module.exports = {
         
     },
 
-    UpdateStockInfo: (code, members, shares) => {
-        UpdateStockData(code, members, shares);
+    UpdateStockInfo: (code, members, shares, marketCap) => {
+        UpdateStockData(code, members, shares, marketCap);
     },
 
     CreateStockInfo: (id, guild, channel) => {
@@ -88,6 +89,7 @@ module.exports = {
     UpdateUserInfo: (id, balance, stock) => {
         const stockString = `${stock.id} ${stock.shares}`;
         UpdateUserBalance(id, balance);
+        console.log(balance)
         module.exports.GetUserInfo(id).then(userData => {
             let userStock = userData.Stocks.filter(s => s.id === stock.id);
             let userStockIndex = userData.Stocks.indexOf(userStock);

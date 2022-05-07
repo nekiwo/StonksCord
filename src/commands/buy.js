@@ -68,19 +68,17 @@ module.exports = {
                 sharesOwned = ownedStock[0].shares;
             }
 
-            let fee = RoundPlaces(sharesOwned * (amount * 0.1) + amount * 0.1);
-
-            if (userInfo.Balance <= amount * stockInfo.Price + fee) {
+            if (userInfo.Balance <= amount * stockInfo.Price) {
                 return interaction.reply(
                     `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}
 You have: ${RoundPlaces(userInfo.Balance)}
-It costs: ${RoundPlaces(amount * stockInfo.Price + fee)}
-You need: ${RoundPlaces(amount * stockInfo.Price + fee - userInfo.Balance)} more`
+It costs: ${RoundPlaces(amount * stockInfo.Price)}
+You need: ${RoundPlaces(amount * stockInfo.Price - userInfo.Balance)} more`
                 );
             } else {
                 UpdateUserInfo(
                     userInfo.ID,
-                    userInfo.Balance - (amount * stockInfo.Price + fee),
+                    userInfo.Balance - (stockInfo.Price * amount),
                     {
                         "id": stockCode,
                         "shares": sharesOwned + amount,
@@ -88,14 +86,14 @@ You need: ${RoundPlaces(amount * stockInfo.Price + fee - userInfo.Balance)} more
                     }
                 );
 
-                UpdateStockInfo(stockCode, guild.members.cache.filter(member => !member.user.bot).size, stockInfo.TotalShares + amount);
+                UpdateStockInfo(stockCode, guild.members.cache.filter(member => !member.user.bot).size, stockInfo.TotalShares + amount, stockInfo.MarketCap + stockInfo.Price * amount);
             }
             
             const buyEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
                 .setTitle(`You bought ${amount} shares in $${stockCode.toUpperCase()}`)
                 .setThumbnail(guild.iconURL())
-                .setDescription(`You spent ${amount * RoundPlaces(stockInfo.Price)}$ (+${fee}$ transaction fee) and your current balance is ${RoundPlaces(userInfo.Balance - (amount * stockInfo.Price + fee))}$`);
+                .setDescription(`You spent ${amount * RoundPlaces(stockInfo.Price)}$ and your current balance is ${RoundPlaces(userInfo.Balance - (amount * stockInfo.Price))}$`);
 
             return interaction.reply({embeds: [buyEmbed.toJSON()]});
         }
