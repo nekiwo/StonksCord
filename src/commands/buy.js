@@ -1,7 +1,7 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStockInfo, GetUserInfo, UpdateUserInfo} = require("../StocksAPI");
-const {FindGuild} = require("../helpers");
+const {FindGuild, RoundPlaces} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -60,25 +60,27 @@ module.exports = {
             if (userInfo == 0) {
                 return interaction.reply("Check your portfolio before making your first buy");
             }
+            
+            let ownedStock = userInfo.Stocks.filter(s => s.id === stockCode);
+            let sharesOwned = 0;
 
-            if (userInfo.Balance <= amount * stockInfo.Price + 1) {
+            if (ownedStock[0] != undefined) {
+                sharesOwned = ownedStock[0].shares;
+            }
+
+            let fee = RoundPlaces(sharesOwned * (amount * 0.1) + amount * 0.1);
+
+            if (userInfo.Balance <= amount * stockInfo.Price + fee) {
                 return interaction.reply(
-                    `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}\n
-                     You have: ${userInfo.Balance}\n
-                     It costs: ${amount * stockInfo.Price + 1}\n
-                     You need: ${amount * stockInfo.Price + 1 - userInfo.Balance} more`
+                    `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}
+You have: ${RoundPlaces(userInfo.Balance)}
+It costs: ${RoundPlaces(amount * stockInfo.Price + fee)}
+You need: ${RoundPlaces(amount * stockInfo.Price + fee - userInfo.Balance)} more`
                 );
             } else {
-                let ownedStock = userInfo.Stocks.filter(s => s.id === stockCode);
-                let sharesOwned = 0;
-
-                if (ownedStock[0] != undefined) {
-                    sharesOwned = ownedStock[0].shares;
-                }
-
                 UpdateUserInfo(
                     userInfo.ID,
-                    userInfo.Balance - (amount * stockInfo.Price + 1),
+                    userInfo.Balance - (amount * stockInfo.Price + fee),
                     {
                         "id": stockCode,
                         "shares": sharesOwned + amount,
@@ -93,7 +95,7 @@ module.exports = {
                 .setColor("#03fc5e")
                 .setTitle(`You bought ${amount} shares in $${stockCode.toUpperCase()}`)
                 .setThumbnail(guild.iconURL())
-                .setDescription(`You spent ${amount * stockInfo.Price}$ (+1$ transaction fee) and your current balance is ${userInfo.Balance - (amount * stockInfo.Price + 1)}$`);
+                .setDescription(`You spent ${amount * RoundPlaces(stockInfo.Price)}$ (+${fee}$ transaction fee) and your current balance is ${RoundPlaces(userInfo.Balance - (amount * stockInfo.Price + fee))}$`);
 
             return interaction.reply({embeds: [buyEmbed.toJSON()]});
         }
