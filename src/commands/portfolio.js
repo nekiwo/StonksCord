@@ -1,6 +1,7 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetUserInfo, CreateUserInfo} = require("../StocksAPI");
+const {RoundPlaces} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,9 +15,9 @@ module.exports = {
             if (userInfo != 0) {
                 let stockListString = "NONE";
                 if (userInfo.Stocks.length > 0) {
-                    let stockListString = "";
+                    stockListString = "";
                     userInfo.Stocks.forEach(stock => {
-                        stockListString = stockListString + `$${stock.id} - ${stock.shares} shares (${stock.worth}$)\n`;
+                        stockListString = stockListString + `$${stock.id.toUpperCase()} - ${stock.shares} shares (${RoundPlaces(stock.worth)}$)\n`;
                     });
                 }
 
@@ -26,11 +27,11 @@ module.exports = {
                     .setThumbnail(interaction.user.displayAvatarURL())
                     .addFields({
                         name: "Balance",
-                        value: userInfo.Balance.toString() + "$",
+                        value: RoundPlaces(userInfo.Balance).toString() + "$",
                         inline: true
                     }, {
                         name: "Worth",
-                        value: userInfo.Worth.toString() + "$",
+                        value: RoundPlaces(userInfo.Worth).toString() + "$",
                         inline: true
                     }, {
                         name: "List of Stocks",
