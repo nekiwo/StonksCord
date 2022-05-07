@@ -3,6 +3,8 @@ const {Collection} = require("discord.js");
 module.exports = {
     CalculatePrice: (members, shares) => members + shares * 0.1,
 
+    RoundPlaces: (amount) => Math.round(amount * 100) / 100,
+
 	InviteToGuild: (invite, client) => {
         client.guilds.cache.forEach(guild => {
             guild.invites.fetch().then(inviteObjs => { 
