@@ -72,7 +72,7 @@ module.exports = {
                         });
                     }
                 }
-                console.log(Number(data.balance), worth, worth + Number(data.balance))
+
                 resolve({
                     ID: data.id,
                     Balance: Number(data.balance),
@@ -90,15 +90,16 @@ module.exports = {
         UpdateUserBalance(id, balance);
         module.exports.GetUserInfo(id).then(userData => {
             let userStock = userData.Stocks.filter(s => s.id === stock.id);
+            let userStockIndex = userData.Stocks.indexOf(userStock);
             
             if (!stock.delete) {
                 if (userStock != []) {
-                    UpdateUserStock(id, stockString, true, userData.Stocks.indexOf(userStock));
+                    UpdateUserStock(id, stockString, true, userStockIndex);
                 } else {
                     UpdateUserStock(id, stockString, false);
                 }
             } else {
-                DeleteUserStock(id, userData.Stocks.indexOf(userStock));
+                DeleteUserStock(id, userStockIndex);
             }
         });
     },
