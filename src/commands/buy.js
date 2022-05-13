@@ -34,6 +34,7 @@ module.exports = {
                     if (code.length < 6) {
                         stockCode = code.replace("$", "").toLowerCase();
                         stockInfo = await GetStockInfo(stockCode, "id");
+                        console.log(stockInfo)
                         if (stockInfo === {}) {
                             return interaction.reply("Sorry, specified stock code was not found");
                         }
@@ -57,6 +58,7 @@ module.exports = {
             }
 
             let userInfo = await GetUserInfo(interaction.user.id);
+            console.log(userInfo)
             if (userInfo == 0) {
                 return interaction.reply("Check your portfolio before making your first buy");
             }
@@ -72,10 +74,12 @@ module.exports = {
                 return interaction.reply(
                     `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}
 You have: ${RoundPlaces(userInfo.Balance)}
-It costs: ${RoundPlaces(amount * stockInfo.Price)}
-You need: ${RoundPlaces(amount * stockInfo.Price - userInfo.Balance)} more`
+It costs: ${RoundPlaces(stockInfo.Price * amount)}
+You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)} more`
                 );
             } else {
+                console.log(userInfo.Balance, stockInfo.Price, amount)
+
                 UpdateUserInfo(
                     userInfo.ID,
                     userInfo.Balance - (stockInfo.Price * amount),

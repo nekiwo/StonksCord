@@ -93,7 +93,6 @@ module.exports = {
                 if (!i.isButton()) return;
 
                 const data = JSON.parse(i.customId);
-                console.log(i.customId)
 
                 switch (data.func) {
                     case "ChooseTime":

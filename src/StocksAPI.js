@@ -7,7 +7,12 @@ module.exports = {
             GetStockData(value, column).then(data => {
                 if (data != undefined) {
                     let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1), data.market_cap.at(-1));
-                    console.log(data.market_cap.at(-1))
+                    console.log(data)
+                    console.log("market cap", data.market_cap.at(-1))
+                    console.log("price", price)
+                    if (price == NaN) {
+                        price = 1;
+                    }
                     resolve({
                         ID: data.id,
                         GuildID: data.guild_id,
@@ -89,7 +94,7 @@ module.exports = {
     UpdateUserInfo: (id, balance, stock) => {
         const stockString = `${stock.id} ${stock.shares}`;
         UpdateUserBalance(id, balance);
-        console.log(balance)
+        console.log("balance", balance)
         module.exports.GetUserInfo(id).then(userData => {
             let userStock = userData.Stocks.filter(s => s.id === stock.id);
             let userStockIndex = userData.Stocks.indexOf(userStock);
