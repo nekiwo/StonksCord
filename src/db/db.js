@@ -24,7 +24,7 @@ module.exports = {
         });
     },
     
-    UpdateStockData: (code, members, shares, marketCap) => {
+    UpdateStockData: (code, members, shares) => {
         sendQuery(
             `UPDATE stocks 
              SET members = array_append(members, $1)
@@ -41,13 +41,6 @@ module.exports = {
 
         sendQuery(
             `UPDATE stocks 
-             SET market_cap = array_append(market_cap, $1)
-             WHERE id = $2;`,
-            [Math.floor(marketCap), code]
-        );
-
-        sendQuery(
-            `UPDATE stocks 
              SET time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
              WHERE id = $1;`,
             [code]
@@ -57,7 +50,7 @@ module.exports = {
     CreateStockData: (id, guildId, invite, members) => {
         sendQuery(
             `INSERT INTO stocks
-             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
+             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
             [id, guildId, invite, members]
         );
     },

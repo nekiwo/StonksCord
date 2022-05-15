@@ -4,7 +4,6 @@ CREATE TABLE stocks (
     invite text UNIQUE,
     members int[],
     total_shares int[],
-    market_cap int[],
     time_stamps timestamp without time zone[]
 );
 

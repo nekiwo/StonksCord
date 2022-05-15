@@ -6,18 +6,12 @@ module.exports = {
         return new Promise(async resolve => {
             GetStockData(value, column).then(data => {
                 if (data != undefined) {
-                    let price = CalculatePrice(data.members.at(-1), data.total_shares.at(-1), data.market_cap.at(-1));
-                    console.log(data)
-                    console.log("market cap", data.market_cap.at(-1))
-                    console.log("price", price)
-                    if (price == NaN) {
-                        price = 1;
-                    }
+                    let price = CalculatePrice(data.members.at(-1));
+
                     resolve({
                         ID: data.id,
                         GuildID: data.guild_id,
                         Price: price,
-                        MarketCap: Number(data.market_cap.at(-1)),
                         TotalShares: data.total_shares.at(-1),
                         Invite: data.invite
                     });
@@ -28,7 +22,7 @@ module.exports = {
         });
     },
 
-    GetStockOverTime: () => {
+    GetStockOverTime: (days, column) => {
         
     },
 
@@ -36,8 +30,8 @@ module.exports = {
         
     },
 
-    UpdateStockInfo: (code, members, shares, marketCap) => {
-        UpdateStockData(code, members, shares, marketCap);
+    UpdateStockInfo: (code, members, shares) => {
+        UpdateStockData(code, members, shares);
     },
 
     CreateStockInfo: (id, guild, channel) => {
@@ -49,7 +43,7 @@ module.exports = {
                 id,
                 guild.id,
                 `https://discord.gg/${invite.code}`,
-                guild.members.cache.filter(member => !member.user.bot).size
+                guild.members.cache.size
             );
         }).catch(console.error);
     },

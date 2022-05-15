@@ -34,7 +34,6 @@ module.exports = {
                     if (code.length < 6) {
                         stockCode = code.replace("$", "").toLowerCase();
                         stockInfo = await GetStockInfo(stockCode, "id");
-                        console.log(stockInfo)
                         if (stockInfo === {}) {
                             return interaction.reply("Sorry, specified stock code was not found");
                         }
@@ -58,7 +57,6 @@ module.exports = {
             }
 
             let userInfo = await GetUserInfo(interaction.user.id);
-            console.log(userInfo)
             if (userInfo == 0) {
                 return interaction.reply("Check your portfolio before making your first buy");
             }
@@ -73,13 +71,11 @@ module.exports = {
             if (userInfo.Balance <= amount * stockInfo.Price) {
                 return interaction.reply(
                     `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}
-You have: ${RoundPlaces(userInfo.Balance)}
-It costs: ${RoundPlaces(stockInfo.Price * amount)}
-You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)} more`
+You have: ${RoundPlaces(userInfo.Balance)}$
+It costs: ${RoundPlaces(stockInfo.Price * amount)}$
+You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)}$ more`
                 );
             } else {
-                console.log(userInfo.Balance, stockInfo.Price, amount)
-
                 UpdateUserInfo(
                     userInfo.ID,
                     userInfo.Balance - (stockInfo.Price * amount),
@@ -90,14 +86,14 @@ You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)} more`
                     }
                 );
 
-                UpdateStockInfo(stockCode, guild.members.cache.filter(member => !member.user.bot).size, stockInfo.TotalShares + amount, stockInfo.MarketCap + stockInfo.Price * amount);
+                UpdateStockInfo(stockCode, guild.members.cache.size, stockInfo.TotalShares + amount);
             }
             
             const buyEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
                 .setTitle(`You bought ${amount} shares in $${stockCode.toUpperCase()}`)
                 .setThumbnail(guild.iconURL())
-                .setDescription(`You spent ${amount * RoundPlaces(stockInfo.Price)}$ and your current balance is ${RoundPlaces(userInfo.Balance - (amount * stockInfo.Price))}$`);
+                .setDescription(`You spent ${amount * RoundPlaces(stockInfo.Price)}$ and your current balance is ${RoundPlaces(userInfo.Balance - (stockInfo.Price * amount))}$`);
 
             return interaction.reply({embeds: [buyEmbed.toJSON()]});
         }

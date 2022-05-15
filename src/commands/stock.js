@@ -46,10 +46,12 @@ module.exports = {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
 
-            let memberCount = guild.members.cache.filter(member => !member.user.bot).size;
-            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares, stockInfo.MarketCap);
+            let memberCount = guild.members.cache.size;
+            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares);
 
-            let tom = Date.now()
+            console.log(memberCount, guild.members.cache.size, guild.members.cache.filter(member => !member.user.bot).size, guild.members)
+
+            stockInfo = await GetStockInfo(stockCode, "id");
             
             let stockEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
@@ -61,8 +63,8 @@ module.exports = {
                     value: stockInfo.Price.toString(),
                     inline: true
                 }, {
-                    name: "Market Cap",
-                    value: stockInfo.MarketCap.toString(),
+                    name: "Member Count",
+                    value: memberCount.toString(),
                     inline: true
                 }, {
                     name: "Total Shares",
@@ -71,10 +73,6 @@ module.exports = {
                 }, {
                     name: "Server",
                     value: `[${guild.name}](${stockInfo.Invite})`,
-                    inline: true
-                }, {
-                    name: "Member Count",
-                    value: memberCount.toString(),
                     inline: true
                 });
 

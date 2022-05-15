@@ -14,12 +14,9 @@ module.exports = {
 	async execute(interaction, client) {
         if (interaction) {
             const stringInput = interaction.options.getString("code");
-            console.log(stringInput)
 
             let guild;
-
             guild = InviteToGuild(stringInput.substring(stringInput.lastIndexOf("/") + 1), client);
-            console.log(guild)
 
             const embed = new MessageEmbed()
                 .setColor("#03fc5e")

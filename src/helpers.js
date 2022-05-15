@@ -1,7 +1,7 @@
 const {Collection} = require("discord.js");
 
 module.exports = {
-    CalculatePrice: (members, shares, marketCap) => members + marketCap / shares,
+    CalculatePrice: (members) => members,
 
     RoundPlaces: (amount) => Math.round(amount * 100) / 100,
 
