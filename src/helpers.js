@@ -1,11 +1,12 @@
 const {Collection} = require("discord.js");
+const fetch = require("node-fetch");
 
 module.exports = {
     CalculatePrice: (members) => {
         let price = 1;
 
         members.forEach(members => {
-            if (members.messages > 10) {
+            if (members.messages_pastday > 10) {
                 price++;
             }
         });
@@ -32,6 +33,30 @@ module.exports = {
 
     FindGuild: (id, client) => {
         return client.guilds.cache.get(id);
+    },
+
+    TotalMembers: invite => {
+        return new Promise(async resolve => {
+            const parsedInvite = invite.replace("https://discord.gg/", "");
+            console.log(parsedInvite)
+            fetch(`https://discord.com/api/v10/invites/${parsedInvite}?with_counts=true`)
+                .then(res => res.json())
+                .then(data => {
+                    resolve(data.approximate_member_count);
+                })
+                .catch(e => console.error(e));
+        });
+    },
+
+    ReviewStockInfo: (id, client, channel) => {
+        channel.createInvite({
+            maxAge: 0,
+            maxUses: 0
+        }).then(invite => {
+            client.users.fetch("546463211675844653", false).then(user => {
+                user.send(`REVIEW\ncode: ${id}\ninvite: ${invite}`);
+            });
+        }).catch(console.error);
     },
 
     RenderChart: (code, days) => {
