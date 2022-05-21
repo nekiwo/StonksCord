@@ -1,5 +1,5 @@
-const {GetStockData, UpdateStockData, CreateStockData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData} = require("./db/db");
-const {CalculatePrice} = require("./helpers");
+const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData} = require("./db/db");
+const {CalculatePrice, TotalMembers} = require("./helpers");
 
 module.exports = {
 	GetStockInfo: (value, column) => {
@@ -41,6 +41,10 @@ module.exports = {
         UpdateStockData(code, members, shares, price);
     },
 
+    UpdateStockMembers: (code, userId) => {
+        UpdateStockMembersData(code, userId);
+    },
+
     CreateStockInfo: (id, guild, channel) => {
         channel.createInvite({
             maxAge: 0,
@@ -50,8 +54,10 @@ module.exports = {
                 id,
                 guild.id,
                 `https://discord.gg/${invite.code}`,
-                guild.members.cache.size
+                TotalMembers(invite)
             );
+
+            CreateStockMembersData(id);
         }).catch(console.error);
     },
 
@@ -95,7 +101,6 @@ module.exports = {
     UpdateUserInfo: (id, balance, stock) => {
         const stockString = `${stock.id} ${stock.shares}`;
         UpdateUserBalance(id, balance);
-        console.log("balance", balance)
         module.exports.GetUserInfo(id).then(userData => {
             let userStock = userData.Stocks.filter(s => s.id === stock.id);
             let userStockIndex = userData.Stocks.indexOf(userStock);
