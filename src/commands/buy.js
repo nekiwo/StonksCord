@@ -86,7 +86,7 @@ You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)}$ more`
                     }
                 );
 
-                UpdateStockInfo(stockCode, guild.members.cache.size, stockInfo.TotalShares + amount);
+                UpdateStockInfo(stockCode, TotalMembers(stockInfo.Invite), stockInfo.TotalShares + amount);
             }
             
             const buyEmbed = new MessageEmbed()

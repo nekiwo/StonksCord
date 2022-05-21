@@ -96,7 +96,7 @@ module.exports = {
                 );
             }
 
-            UpdateStockInfo(stockCode, guild.members.cache.size, stockInfo.TotalShares - amount);
+            UpdateStockInfo(stockCode, TotalMembers(stockInfo.Invite), stockInfo.TotalShares - amount);
             
             const sellEmbed = new MessageEmbed()
                 .setColor("#03fc5e")
