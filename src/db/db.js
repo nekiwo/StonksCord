@@ -24,11 +24,10 @@ module.exports = {
         });
     },
 
-    GetStockMembersData: (id) => {
+    GetStockMembersData: (code) => {
         return new Promise(resolve => {
             sendQuery(
-                `SELECT * FROM $1;`, 
-                ["stock" + id]
+                `SELECT * FROM stock${code};`
             ).then(data => {
                 resolve(data);
             });
@@ -65,43 +64,42 @@ module.exports = {
         );
     },
 
-    UpdateStockMembersData: (id, userId, messages) => {
+    UpdateStockMembersData: (code, userId) => {
         sendQuery(
-            `SELECT * FROM $1 WHERE id = $2;`, 
-            ["stock" + id, userId]
+            `SELECT * FROM stock${code} WHERE id = $1;`, 
+            [userId]
         ).then(data => {
             if (data.length === 0) {
                 sendQuery(
-                    `INSERT INTO $1
-                     VALUES ($2, $3);`, 
-                    [id, userId, messages]
+                    `INSERT INTO stock${code}
+                     VALUES ($1, 1);`, 
+                    [userId]
                 );
             } else {
                 sendQuery(
-                    `UPDATE $1 
-                     SET messages_pastday = $3
-                     WHERE id = $2;`,
-                    ["stock" + id, userId, messages]
+                    `UPDATE stock${code} 
+                     SET messages_pastday = $2
+                     WHERE id = $1;`,
+                    [userId, Number(data[0].messages_pastday) + 1]
                 );
             }
         });
     },
 
-    CreateStockData: (id, guildId, invite, members) => {
+    CreateStockData: (code, guildId, invite, members) => {
         sendQuery(
             `INSERT INTO stocks
-             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
-            [id, guildId, invite, members]
+             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
+            [code, guildId, invite, members]
         );
     },
 
-    CreateStockMembersData: (id) => {
+    CreateStockMembersData: (code) => {
         sendQuery(
-            `CREATE TABLE $1 (
+            `CREATE TABLE stock${code} (
                  id text PRIMARY KEY UNIQUE,
-                 messages_pastday int 
-             );`, 
-            ["stock" + id]
+                 messages_pastday text 
+             );`
         );
     },
 
@@ -109,7 +107,7 @@ module.exports = {
         return new Promise(resolve => {
             sendQuery(
                 "SELECT * FROM users WHERE id = $1;", 
-                [id]
+                [id.toString()]
             ).then(data => {
                 resolve(data[0]);
             });
