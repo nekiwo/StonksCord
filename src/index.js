@@ -1,8 +1,11 @@
 const fs = require("fs");
 const {Client, Collection, Intents} = require("discord.js");
 const {Token} = require("./config.json");
+const {MessageCounter} = require("./MessageCounter");
 
-const client = new Client({intents: [Intents.FLAGS.GUILDS]});
+const client = new Client({
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]
+});
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
@@ -29,6 +32,12 @@ client.on("interactionCreate", async interaction => {
 		console.error(error);
 		return interaction.reply({content: "Sorry, there has been an error", ephemeral: true});
 	}
+});
+
+client.on("messageCreate", async message => {
+	if (!message.author.bot) {
+        MessageCounter(message.guild.id, message.author.id);
+    }
 });
 
 client.on("guildCreate", guild => {
