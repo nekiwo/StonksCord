@@ -1,7 +1,7 @@
 const {MessageEmbed, MessageActionRow, MessageButton, MessageAttachment} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStockInfo} = require("../StocksAPI");
-const {FindGuild, RenderChart} = require("../helpers");
+const {FindGuild, TotalMembers, RenderChart} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,10 +46,9 @@ module.exports = {
                 return interaction.reply("Sorry, specified stock code was not found");
             }
 
-            let memberCount = guild.members.cache.size;
+            let memberCount = await TotalMembers(stockInfo.Invite);
+            console.log(memberCount)
             UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares);
-
-            console.log(memberCount, guild.members.cache.size, guild.members.cache.filter(member => !member.user.bot).size, guild.members)
 
             stockInfo = await GetStockInfo(stockCode, "id");
             
