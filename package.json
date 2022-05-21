@@ -24,6 +24,7 @@
     "@discordjs/rest": "^0.2.0-canary.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.0",
+    "node-fetch": "^2.6.7",
     "pg": "^8.7.3"
   }
 }
