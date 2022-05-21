@@ -4,16 +4,23 @@ const {CalculatePrice} = require("./helpers");
 module.exports = {
 	GetStockInfo: (value, column) => {
         return new Promise(async resolve => {
-            GetStockData(value, column).then(data => {
-                if (data != undefined) {
-                    let price = CalculatePrice(data.members.at(-1));
+            GetStockData(value, column).then(stockData => {
+                if (stockData != undefined) {
+                    let price = 1;
+                    GetStockMembersData(stockData.id).then(membersData => {
+                        if (membersData != undefined) {
+                            price = CalculatePrice(membersData);
+                        }
 
-                    resolve({
-                        ID: data.id,
-                        GuildID: data.guild_id,
-                        Price: price,
-                        TotalShares: data.total_shares.at(-1),
-                        Invite: data.invite
+                        module.exports.UpdateStockInfo(stockData.id, stockData.members.at(-1), stockData.total_shares.at(-1), price)
+
+                        resolve({
+                            ID: stockData.id,
+                            GuildID: stockData.guild_id,
+                            Price: price,
+                            TotalShares: stockData.total_shares.at(-1),
+                            Invite: stockData.invite
+                        });
                     });
                 } else {
                     resolve({});
@@ -30,8 +37,8 @@ module.exports = {
         
     },
 
-    UpdateStockInfo: (code, members, shares) => {
-        UpdateStockData(code, members, shares);
+    UpdateStockInfo: (code, members, shares, price) => {
+        UpdateStockData(code, members, shares, price);
     },
 
     CreateStockInfo: (id, guild, channel) => {

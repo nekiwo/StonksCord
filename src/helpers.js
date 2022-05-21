@@ -1,7 +1,17 @@
 const {Collection} = require("discord.js");
 
 module.exports = {
-    CalculatePrice: (members) => members,
+    CalculatePrice: (members) => {
+        let price = 1;
+
+        members.forEach(members => {
+            if (members.messages > 10) {
+                price++;
+            }
+        });
+        
+        return price;
+    },
 
     RoundPlaces: (amount) => Math.round(amount * 100) / 100,
 

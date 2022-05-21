@@ -23,8 +23,19 @@ module.exports = {
             });
         });
     },
+
+    GetStockMembersData: (id) => {
+        return new Promise(resolve => {
+            sendQuery(
+                `SELECT * FROM $1;`, 
+                ["stock" + id]
+            ).then(data => {
+                resolve(data);
+            });
+        });
+    },
     
-    UpdateStockData: (code, members, shares) => {
+    UpdateStockData: (code, members, shares, price) => {
         sendQuery(
             `UPDATE stocks 
              SET members = array_append(members, $1)
@@ -41,10 +52,39 @@ module.exports = {
 
         sendQuery(
             `UPDATE stocks 
+             SET price = array_append(price, $1)
+             WHERE id = $2;`,
+            [price, code]
+        );
+
+        sendQuery(
+            `UPDATE stocks 
              SET time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
              WHERE id = $1;`,
             [code]
         );
+    },
+
+    UpdateStockMembersData: (id, userId, messages) => {
+        sendQuery(
+            `SELECT * FROM $1 WHERE id = $2;`, 
+            ["stock" + id, userId]
+        ).then(data => {
+            if (data.length === 0) {
+                sendQuery(
+                    `INSERT INTO $1
+                     VALUES ($2, $3);`, 
+                    [id, userId, messages]
+                );
+            } else {
+                sendQuery(
+                    `UPDATE $1 
+                     SET messages_pastday = $3
+                     WHERE id = $2;`,
+                    ["stock" + id, userId, messages]
+                );
+            }
+        });
     },
 
     CreateStockData: (id, guildId, invite, members) => {
@@ -52,6 +92,16 @@ module.exports = {
             `INSERT INTO stocks
              VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
             [id, guildId, invite, members]
+        );
+    },
+
+    CreateStockMembersData: (id) => {
+        sendQuery(
+            `CREATE TABLE $1 (
+                 id text PRIMARY KEY UNIQUE,
+                 messages_pastday int 
+             );`, 
+            ["stock" + id]
         );
     },
 

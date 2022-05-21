@@ -63,12 +63,16 @@ module.exports = {
                     value: stockInfo.Price.toString(),
                     inline: true
                 }, {
-                    name: "Member Count",
-                    value: memberCount.toString(),
+                    name: "Market Cap",
+                    value: (stockInfo.TotalShares * stockInfo.Price).toString(),
                     inline: true
                 }, {
                     name: "Total Shares",
                     value: stockInfo.TotalShares.toString(),
+                    inline: true
+                }, {
+                    name: "Member Count",
+                    value: memberCount.toString(),
                     inline: true
                 }, {
                     name: "Server",
