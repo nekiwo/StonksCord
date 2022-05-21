@@ -1,6 +1,7 @@
 const {MessageEmbed, MessageActionRow, MessageButton, Permissions} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, CreateStockInfo} = require("../StocksAPI");
+const {ReviewStockInfo} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -66,10 +67,11 @@ module.exports = {
                                         switch (data.func) {
                                             case "accept":
                                                 CreateStockInfo(code.toLowerCase(), i.guild, i.channel);
+                                                ReviewStockInfo(code.toLowerCase(), client, i.channel);
         
                                                 configEmbed = new MessageEmbed()
                                                     .setColor("#03fc5e")
-                                                    .setTitle(`Code set as $${code.toUpperCase()}`);
+                                                    .setTitle(`Code set as $${code.toUpperCase()}. Your server will be reviewed once by our team to make sure there is no schemes.`);
                                                 return i.update({embeds: [configEmbed.toJSON()], components: []});
                                             case "cancel":
                                                 console.log("delete reply")
