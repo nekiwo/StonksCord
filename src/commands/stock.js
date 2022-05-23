@@ -47,8 +47,7 @@ module.exports = {
             }
 
             let memberCount = await TotalMembers(stockInfo.Invite);
-            console.log(memberCount)
-            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares);
+            UpdateStockInfo(stockCode, memberCount, stockInfo.TotalShares, stockInfo.Price);
 
             stockInfo = await GetStockInfo(stockCode, "id");
             

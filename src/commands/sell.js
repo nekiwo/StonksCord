@@ -1,7 +1,7 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStockInfo, GetUserInfo, UpdateUserInfo} = require("../StocksAPI");
-const {FindGuild, RoundPlaces} = require("../helpers");
+const {FindGuild, TotalMembers, RoundPlaces} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -96,7 +96,7 @@ module.exports = {
                 );
             }
 
-            UpdateStockInfo(stockCode, TotalMembers(stockInfo.Invite), stockInfo.TotalShares - amount);
+            UpdateStockInfo(stockCode, await TotalMembers(stockInfo.Invite), stockInfo.TotalShares - amount);
             
             const sellEmbed = new MessageEmbed()
                 .setColor("#03fc5e")

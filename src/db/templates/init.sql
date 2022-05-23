@@ -16,5 +16,5 @@ CREATE TABLE users (
 
 CREATE TABLE stockID /* STOCK ID HERE */ (
     id text PRIMARY KEY UNIQUE,
-    messages_pastday text 
+    time_stamps timestamp without time zone[]
 );

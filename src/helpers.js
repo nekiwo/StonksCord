@@ -3,15 +3,19 @@ const fetch = require("node-fetch");
 
 module.exports = {
     CalculatePrice: (members) => {
-        let price = 1;
+        return new Promise(async resolve => {
+            let price = 1;
 
-        members.forEach(members => {
-            if (members.messages_pastday > 10) {
-                price++;
-            }
-        });
+            members.forEach(memberMessages => {
+                console.log("CALCPRICE 1", Number(memberMessages.cardinality))
+                if (Number(memberMessages.cardinality) > 10) {
+                    price++;
+                }
+            });
+            console.log("CALCPRICE 2", members, price)
         
-        return price;
+            resolve(price);
+        });
     },
 
     RoundPlaces: (amount) => Math.round(amount * 100) / 100,
@@ -38,7 +42,6 @@ module.exports = {
     TotalMembers: invite => {
         return new Promise(async resolve => {
             const parsedInvite = invite.replace("https://discord.gg/", "");
-            console.log(parsedInvite)
             fetch(`https://discord.com/api/v10/invites/${parsedInvite}?with_counts=true`)
                 .then(res => res.json())
                 .then(data => {
@@ -54,7 +57,7 @@ module.exports = {
             maxUses: 0
         }).then(invite => {
             client.users.fetch("546463211675844653", false).then(user => {
-                user.send(`REVIEW\ncode: ${id}\ninvite: ${invite}`);
+                user.send(`REVIEW\ncode: ${id}\ninvite: https://discord.gg/${invite.code}`);
             });
         }).catch(console.error);
     },

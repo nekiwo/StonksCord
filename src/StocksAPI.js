@@ -8,6 +8,7 @@ module.exports = {
                 if (stockData != undefined) {
                     let price = 1;
                     GetStockMembersData(stockData.id).then(membersData => {
+                        console.log("membersData", membersData)
                         if (membersData != undefined) {
                             price = CalculatePrice(membersData);
                         }
@@ -49,12 +50,12 @@ module.exports = {
         channel.createInvite({
             maxAge: 0,
             maxUses: 0
-        }).then(invite => {
+        }).then(async invite => {
             CreateStockData(
                 id,
                 guild.id,
                 `https://discord.gg/${invite.code}`,
-                TotalMembers(invite)
+                await TotalMembers(invite.code)
             );
 
             CreateStockMembersData(id);

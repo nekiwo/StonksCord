@@ -27,7 +27,13 @@ module.exports = {
     GetStockMembersData: (code) => {
         return new Promise(resolve => {
             sendQuery(
-                `SELECT * FROM stock${code};`
+                //`SELECT * FROM stock${code};`
+                `SELECT cardinality(array_agg(msg)) FROM  (
+                    SELECT * FROM
+                    (SELECT id, unnest(time_stamps) msg FROM stock${code}) AS test1
+                    WHERE NOW() - msg < interval '24 hour'
+                ) AS test2
+                GROUP BY id;`
             ).then(data => {
                 resolve(data);
             });
@@ -72,15 +78,15 @@ module.exports = {
             if (data.length === 0) {
                 sendQuery(
                     `INSERT INTO stock${code}
-                     VALUES ($1, 1);`, 
+                     VALUES ($1, ARRAY [NOW()::timestamp]::timestamp[]);`, 
                     [userId]
                 );
             } else {
                 sendQuery(
                     `UPDATE stock${code} 
-                     SET messages_pastday = $2
+                     SET time_stamps = array_append(time_stamps, NOW())
                      WHERE id = $1;`,
-                    [userId, Number(data[0].messages_pastday) + 1]
+                    [userId]
                 );
             }
         });
@@ -89,7 +95,7 @@ module.exports = {
     CreateStockData: (code, guildId, invite, members) => {
         sendQuery(
             `INSERT INTO stocks
-             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
+             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp]::timestamp[]);`, 
             [code, guildId, invite, members]
         );
     },
@@ -98,7 +104,7 @@ module.exports = {
         sendQuery(
             `CREATE TABLE stock${code} (
                  id text PRIMARY KEY UNIQUE,
-                 messages_pastday text 
+                 time_stamps timestamp without time zone[]
              );`
         );
     },

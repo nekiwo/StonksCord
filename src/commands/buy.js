@@ -1,7 +1,7 @@
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStockInfo, GetUserInfo, UpdateUserInfo} = require("../StocksAPI");
-const {FindGuild, RoundPlaces} = require("../helpers");
+const {FindGuild, TotalMembers, RoundPlaces} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -86,7 +86,7 @@ You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)}$ more`
                     }
                 );
 
-                UpdateStockInfo(stockCode, TotalMembers(stockInfo.Invite), stockInfo.TotalShares + amount);
+                UpdateStockInfo(stockCode, await TotalMembers(stockInfo.Invite), stockInfo.TotalShares + amount);
             }
             
             const buyEmbed = new MessageEmbed()
