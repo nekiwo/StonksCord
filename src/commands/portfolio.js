@@ -23,7 +23,7 @@ module.exports = {
 
                 userEmbed = new MessageEmbed()
                     .setColor("#03fc5e")
-                    .setTitle(`User info for @${interaction.user.username}`)
+                    .setTitle(`@${interaction.user.username}'s portfolio`)
                     .setThumbnail(interaction.user.displayAvatarURL())
                     .addFields({
                         name: "Balance",
@@ -42,7 +42,7 @@ module.exports = {
 
                 userEmbed = new MessageEmbed()
                     .setColor("#03fc5e")
-                    .setTitle(`User info for @${interaction.user.username}`)
+                    .setTitle(`@${interaction.user.username}'s portfolio`)
                     .setThumbnail(interaction.user.displayAvatarURL())
                     .addFields({
                         name: "Balance",
