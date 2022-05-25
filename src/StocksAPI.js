@@ -1,4 +1,4 @@
-const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData} = require("./db/db");
+const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData, GetStockDataOverTime} = require("./db/db");
 const {CalculatePrice, TotalMembers} = require("./helpers");
 
 module.exports = {
@@ -7,10 +7,9 @@ module.exports = {
             GetStockData(value, column).then(stockData => {
                 if (stockData != undefined) {
                     let price = 1;
-                    GetStockMembersData(stockData.id).then(membersData => {
-                        console.log("membersData", membersData)
+                    GetStockMembersData(stockData.id).then(async membersData => {
                         if (membersData != undefined) {
-                            price = CalculatePrice(membersData);
+                            price = await CalculatePrice(membersData);
                         }
 
                         module.exports.UpdateStockInfo(stockData.id, stockData.members.at(-1), stockData.total_shares.at(-1), price)
@@ -30,8 +29,16 @@ module.exports = {
         });
     },
 
-    GetStockOverTime: (days, column) => {
-        
+    GetStockOverTime: (code, days, column) => {
+        return new Promise(async resolve => {
+            GetStockDataOverTime(code, days, column).then(stockData => {
+                if (stockData != undefined) {
+                    resolve(stockData);
+                } else {
+                    resolve({});
+                }
+            });
+        });
     },
 
     GetStocksList: () => {
