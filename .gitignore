@@ -105,3 +105,5 @@ dist
 
 # Discord Bot Token
 src/config.json
+
+test
