@@ -2,6 +2,7 @@ const fs = require("fs");
 const {Client, Collection, Intents} = require("discord.js");
 const {Token} = require("./config.json");
 const {MessageCounter} = require("./MessageCounter");
+const {ButtonHandler} = require("./ButtonHandler");
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]
@@ -39,6 +40,8 @@ client.on("messageCreate", async message => {
         MessageCounter(message.guild.id, message.author.id);
     }
 });
+
+client.on("interactionCreate", ButtonHandler);
 
 client.on("guildCreate", guild => {
     const channels = guild.channels.cache.filter(channel => channel.type == "text");
