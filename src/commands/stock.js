@@ -1,7 +1,7 @@
-const {MessageEmbed, MessageActionRow, MessageButton, MessageAttachment} = require("discord.js") 
+const {MessageEmbed, MessageActionRow, MessageButton} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetStockInfo, UpdateStockInfo} = require("../StocksAPI");
-const {FindGuild, TotalMembers, RenderChart} = require("../helpers");
+const {FindGuild, TotalMembers} = require("../helpers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -58,11 +58,11 @@ module.exports = {
                 //.setDescription(`[Click here for invite Link](${stockInfo.Invite})`)
                 .addFields({
                     name: "Stonk Price",
-                    value: stockInfo.Price.toString(),
+                    value: stockInfo.Price.toString() + "$",
                     inline: true
                 }, {
                     name: "Market Cap",
-                    value: (stockInfo.TotalShares * stockInfo.Price).toString(),
+                    value: (stockInfo.TotalShares * stockInfo.Price).toString() + "$",
                     inline: true
                 }, {
                     name: "Total Shares",
@@ -78,73 +78,27 @@ module.exports = {
                     inline: true
                 });
 
+            module.exports.Embed.embedId = Date.now().toString();
+            module.exports.Embed.embed = stockEmbed.toJSON();
+
             const showGraphBtn = new MessageActionRow()
                 .addComponents(
                     new MessageButton()
                         .setCustomId(JSON.stringify({
                             "func": "ChooseTime",
-                            "stock": stockCode
+                            "code": stockCode,
+                            "embedId": module.exports.Embed.embedId
                         }))
                         .setLabel("Show Charts")
                         .setStyle("PRIMARY")
                 );
-
-            client.on("interactionCreate", async i => {
-                if (!i.isButton()) return;
-
-                const data = JSON.parse(i.customId);
-
-                switch (data.func) {
-                    case "ChooseTime":
-                        const selectTimeBtns = new MessageActionRow()
-                            .addComponents(
-                                new MessageButton()
-                                    .setCustomId(JSON.stringify({
-                                        "func": "RenderChart",
-                                        "stock": stockCode,
-                                        "time": 1,
-                                        "timeLabel": "past day"
-                                    }))
-                                    .setLabel("Past Day")
-                                    .setStyle("PRIMARY"),
-                                new MessageButton()
-                                    .setCustomId(JSON.stringify({
-                                        "func": "RenderChart",
-                                        "stock": stockCode,
-                                        "time": 7,
-                                        "timeLabel": "past week"
-                                    }))
-                                    .setLabel("Past Week")
-                                    .setStyle("PRIMARY"),
-                                new MessageButton()
-                                    .setCustomId(JSON.stringify({
-                                        "func": "RenderChart",
-                                        "stock": stockCode,
-                                        "time": 999,
-                                        "timeLabel": "all time"
-                                    }))
-                                    .setLabel("All Time")
-                                    .setStyle("PRIMARY")
-                            );
-
-                        return i.update({components: [selectTimeBtns]});
-                    case "RenderChart":
-                        RenderChart(code, data.time).then(imgName => {
-                            stockEmbed
-                                .attachFiles(
-                                    new MessageAttachment(`./img/${imgName}`, "imgName")
-                                )
-                                .setImage(`attachment://${imgName}`);
-                            return i.update({embeds: [stockEmbed.toJSON()]});
-                        }).catch(err => {
-                            console.error(err);
-                            stockEmbed.setImage("https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart");
-                            return i.update({embeds: [stockEmbed.toJSON()]});
-                        });
-                }
-            });
             
             return interaction.reply({embeds: [stockEmbed.toJSON()], components: [showGraphBtn]});
         }
 	},
+
+    Embed: {
+        embedId: "",
+        embed: {}
+    }
 };
