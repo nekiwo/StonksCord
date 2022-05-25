@@ -6,25 +6,25 @@ module.exports = {
 		.setDescription("Top best/worst performing stocks and users")
         .addStringOption(option => option
             .setName("scoreboard")
-            .setDescription("Which scoreboard (stocks, stocksworst, users)")
+            .setDescription("Which scoreboard")
             .setRequired(true)
+            .addChoice("Best Stocks", "BestStocks")
+            .addChoice("Worst Stocks", "WorstStocks")
+            .addChoice("Richest Users", "RichestUsers")
         ),
 	async execute(interaction) {
         if (interaction) {
             const scoreboardType = interaction.options.getString("scoreboard");
 
 			switch (scoreboardType) {
-				case "stocks":
+				case "BestStocks":
 					
 					break;
-				case "stocksworst":
+				case "WorstStocks":
 					
 					break;
-				case "users":
+				case "RichestUsers":
 					
-					break;
-				default:
-					return interaction.reply("Scoreboard type not found in list (stocks, stocksworst, users)");
 					break;
 			}
         }
