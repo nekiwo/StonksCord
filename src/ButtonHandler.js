@@ -65,21 +65,14 @@ module.exports = {
 
                 RenderChart(data.code, data.time, await GetStockOverTime(data.code, data.time, "price")).then(async imgName => {
                     const attachment = new MessageAttachment(`./img/${imgName}`, imgName);
-                    /*stockEmbed.setImage(`attachment://${imgName}`);
-                    console.log(stockEmbed.toJSON())
-                    await interaction.update({embeds: [stockEmbed.toJSON()], files: [attachment]});*/
-                    messageEmbed.image = {
-                        url: `attachment://${imgName}`
-                    }
+                    messageEmbed.image = {url: `attachment://${imgName}`}
+                    
                     await interaction.update({embeds: [messageEmbed], files: [attachment]});
-
                     fs.unlink(`./img/${imgName}`, err => {
                         if (err) console.error(err);
                     });
                 }).catch(err => {
                     console.error(err);
-                    /*stockEmbed.setImage("https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart");
-                    return interaction.update({embeds: [stockEmbed.toJSON()]});*/
                     messageEmbed.image.url = "https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart";
                     return interaction.update({embeds: [messageEmbed]});
                 });
