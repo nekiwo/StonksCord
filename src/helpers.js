@@ -7,12 +7,10 @@ module.exports = {
             let price = 1;
 
             members.forEach(memberMessages => {
-                console.log("CALCPRICE 1", Number(memberMessages.cardinality))
                 if (Number(memberMessages.cardinality) > 10) {
                     price++;
                 }
             });
-            console.log("CALCPRICE 2", members, price)
         
             resolve(price);
         });
@@ -60,22 +58,5 @@ module.exports = {
                 user.send(`REVIEW\ncode: ${id}\ninvite: https://discord.gg/${invite.code}`);
             });
         }).catch(console.error);
-    },
-
-    RenderChart: (code, days) => {
-        // check if image already exists
-        // render one if not
-
-        /* 
-         * naming scheme: test7d1649812800000t.png
-         *  - stock: test
-         *  - timeframe: 7 days
-         *  - time of render: 1649812800000 [unix epoch to the 10 minute precision]
-         * 
-         * calculate 10 minute precision:
-         * - var epoch = unix epoch time in milliseconds 
-         * - epoch - epoch % 600000
-         * 
-         */
     }
 };
