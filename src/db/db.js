@@ -1,8 +1,10 @@
 const fs = require("fs");
-const {Pool} = require("pg");
+const {Pool, types} = require("pg");
 
 const config = JSON.parse(fs.readFileSync("./config.json"));
 const pool = new Pool(config.DBConfig.db);
+
+types.setTypeParser(1700, value => parseFloat(value));
 
 
 const sendQuery = (query, params) => pool.query(query, params).then(
@@ -32,8 +34,21 @@ module.exports = {
                     SELECT * FROM
                     (SELECT id, unnest(time_stamps) msg FROM stock${code}) AS test1
                     WHERE NOW() - msg < interval '24 hour'
-                ) AS test2
-                GROUP BY id;`
+                 ) AS test2
+                 GROUP BY id;`
+            ).then(data => {
+                resolve(data);
+            });
+        });
+    },
+
+    GetStockDataOverTime: (code, days, column) => {
+        return new Promise(resolve => {
+            sendQuery(
+                `SELECT * FROM
+                    (SELECT unnest(${column}) y, unnest(time_stamps) x FROM stocks WHERE id = $1) AS test1
+                 WHERE NOW() - x < interval '${24 * days} hour'`, 
+                [code]
             ).then(data => {
                 resolve(data);
             });
@@ -78,13 +93,13 @@ module.exports = {
             if (data.length === 0) {
                 sendQuery(
                     `INSERT INTO stock${code}
-                     VALUES ($1, ARRAY [NOW()::timestamp]::timestamp[]);`, 
+                     VALUES ($1, ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
                     [userId]
                 );
             } else {
                 sendQuery(
                     `UPDATE stock${code} 
-                     SET time_stamps = array_append(time_stamps, NOW())
+                     SET time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
                      WHERE id = $1;`,
                     [userId]
                 );
@@ -95,7 +110,7 @@ module.exports = {
     CreateStockData: (code, guildId, invite, members) => {
         sendQuery(
             `INSERT INTO stocks
-             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp]::timestamp[]);`, 
+             VALUES ($1, $2, $3, ARRAY [$4::integer]::integer[], ARRAY [0]::integer[], ARRAY [0]::integer[], ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
             [code, guildId, invite, members]
         );
     },
