@@ -1,4 +1,4 @@
-const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData, GetStockDataOverTime} = require("./db/db");
+const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData, GetStockDataOverTime, GetTopStocksData, GetTopUsersData} = require("./db/db");
 const {CalculatePrice, TotalMembers} = require("./helpers");
 
 module.exports = {
@@ -12,13 +12,13 @@ module.exports = {
                             price = await CalculatePrice(membersData);
                         }
 
-                        module.exports.UpdateStockInfo(stockData.id, stockData.members.at(-1), stockData.total_shares.at(-1), price)
+                        //module.exports.UpdateStockInfo(stockData.id, stockData.members, stockData.total_shares, price)
 
                         resolve({
                             ID: stockData.id,
                             GuildID: stockData.guild_id,
                             Price: price,
-                            TotalShares: stockData.total_shares.at(-1),
+                            TotalShares: stockData.total_shares,
                             Invite: stockData.invite
                         });
                     });
@@ -41,8 +41,29 @@ module.exports = {
         });
     },
 
-    GetStocksList: () => {
-        
+    GetTopStocksList: (isDesc) => {
+        return new Promise(async resolve => {
+            let desc = "";
+            if (isDesc) {
+                desc = "DESC";
+            }
+
+            GetTopStocksData(desc).then(stocksList => {
+                if (stocksList != undefined) {
+                    let result = [];
+                    stocksList.forEach(stock => {
+                        result.push({
+                            Code: stock.id,
+                            Change: (stock.current_price - stock.old_price).toString()
+                        });
+                    });
+
+                    resolve(result);
+                } else {
+                    resolve([]);
+                }
+            });
+        });
     },
 
     UpdateStockInfo: (code, members, shares, price) => {
@@ -106,9 +127,29 @@ module.exports = {
         });
     },
 
-    UpdateUserInfo: (id, balance, stock) => {
+    GetTopUsersList: (client) => {
+        return new Promise(async resolve => {
+            GetTopUsersData().then(usersList => {
+                if (usersList != undefined) {
+                    let result = [];
+                    usersList.forEach(user => {
+                        result.push({
+                            Tag: client.users.cache.get(user.id).username,
+                            Worth: user.worth
+                        });
+                    });
+
+                    resolve(result);
+                } else {
+                    resolve([]);
+                }
+            });
+        });
+    },
+
+    UpdateUserInfo: (id, balance, stock, worth) => {
         const stockString = `${stock.id} ${stock.shares}`;
-        UpdateUserBalance(id, balance);
+        UpdateUserBalance(id, balance, worth);
         module.exports.GetUserInfo(id).then(userData => {
             let userStock = userData.Stocks.filter(s => s.id === stock.id);
             let userStockIndex = userData.Stocks.indexOf(userStock);
