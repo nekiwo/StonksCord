@@ -11,7 +11,8 @@ CREATE TABLE stocks (
 CREATE TABLE users (
     id bigint PRIMARY KEY UNIQUE,
     balance decimal,
-    stocks text[] -- ['test 54']
+    stocks text[], -- ['test 54']
+    worth decimal
 );
 
 CREATE TABLE stockID /* STOCK ID HERE */ (
