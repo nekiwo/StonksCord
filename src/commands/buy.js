@@ -83,7 +83,8 @@ You need: ${RoundPlaces(stockInfo.Price * amount - userInfo.Balance)}$ more`
                         "id": stockCode,
                         "shares": sharesOwned + amount,
                         "delete": false
-                    }
+                    },
+                    userInfo.Worth
                 );
 
                 UpdateStockInfo(stockCode, await TotalMembers(stockInfo.Invite), stockInfo.TotalShares + amount);
