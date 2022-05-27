@@ -139,6 +139,26 @@ module.exports = {
         });
     },
 
+    DeleteStockMembersData: (code) => {
+        sendQuery(
+            `WITH corrected AS (
+                SELECT id, array_agg(ts) new_time_stamps
+                FROM stock${code}, unnest(time_stamps) ts
+                WHERE NOW()::timestamp without time zone - ts < interval '24 hours'
+                GROUP BY id
+            )
+            UPDATE stock${code}
+            SET time_stamps = new_time_stamps
+            FROM corrected
+            WHERE time_stamps <> new_time_stamps
+            AND stock${code}.id = corrected.id;`
+        );
+
+        sendQuery(
+            ``// delete rows that have zero "time_stamps" entries over past 24 hours
+        );
+    },
+
     CreateStockData: (code, guildId, invite, members) => {
         sendQuery(
             `INSERT INTO stocks
