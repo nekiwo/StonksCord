@@ -18,7 +18,7 @@ module.exports = {
     GetStockData: (value, column) => {
         return new Promise(resolve => {
             sendQuery(
-                `SELECT * FROM stocks WHERE ${column} = $1;`, 
+                `SELECT id, guild_id, invite, members[array_upper(members, 1)], price[array_upper(price, 1)], total_shares[array_upper(total_shares, 1)] FROM stocks WHERE ${column} = $1;`, 
                 [value]
             ).then(data => {
                 resolve(data[0]);
@@ -29,7 +29,6 @@ module.exports = {
     GetStockMembersData: (code) => {
         return new Promise(resolve => {
             sendQuery(
-                //`SELECT * FROM stock${code};`
                 `SELECT cardinality(array_agg(msg)) FROM  (
                     SELECT * FROM
                     (SELECT id, unnest(time_stamps) msg FROM stock${code}) AS test1
@@ -49,6 +48,39 @@ module.exports = {
                     (SELECT unnest(${column}) y, unnest(time_stamps) x FROM stocks WHERE id = $1) AS test1
                  WHERE NOW() - x < interval '${24 * days} hour'`, 
                 [code]
+            ).then(data => {
+                resolve(data);
+            });
+        });
+    },
+
+    GetTopStocksData: (desc) => {
+        return new Promise(resolve => {
+            sendQuery(// format this later xd
+                `SELECT * FROM (SELECT id, (SELECT p
+                 FROM (SELECT unnest(price) p, unnest(time_stamps) t FROM stocks) AS test1
+                 ORDER BY abs(extract(epoch FROM (t - (NOW()::timestamp without time zone - INTERVAL '168 hours'))))
+                 limit 1) AS old_price, (SELECT price[array_upper(price, 1)] FROM stocks) AS current_price FROM stocks) AS test3 ORDER BY current_price - old_price ${desc} LIMIT 10`
+            ).then(data => {
+                resolve(data);
+            });
+        });
+    },
+
+    GetAllStocksData: () => {
+        return new Promise(resolve => {
+            sendQuery(
+                `SELECT * FROM stocks`
+            ).then(data => {
+                resolve(data);
+            });
+        });
+    },
+
+    GetAllStockMembersData: (code) => {
+        return new Promise(resolve => {
+            sendQuery(
+                `SELECT * FROM stock${code}`
             ).then(data => {
                 resolve(data);
             });
@@ -135,12 +167,23 @@ module.exports = {
         });
     },
 
-    UpdateUserBalance: (id, balance) => {
+    GetTopUsersData: () => {
+        return new Promise(resolve => {
+            sendQuery(
+                `SELECT * FROM users ORDER BY worth LIMIT 10;`
+            ).then(data => {
+                resolve(data);
+            });
+        });
+    },
+
+    UpdateUserBalance: (id, balance, worth) => {
         sendQuery(
             `UPDATE users
              SET balance = $2
+             SET worth = $3
              WHERE id = $1;`,
-            [id, balance]
+            [id, balance, worth]
         );
     },
 
@@ -174,7 +217,7 @@ module.exports = {
     CreateUserData: (id) => {
         sendQuery(
             `INSERT INTO users
-             VALUES ($1, 100, ARRAY[]::text[]);`,
+             VALUES ($1, 100, ARRAY[]::text[], 100);`,
             [id]
         );
     }
