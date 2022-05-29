@@ -1,6 +1,7 @@
 const fs = require("fs");
-const {MessageActionRow, MessageButton, MessageAttachment} = require("discord.js") 
-const {GetStockOverTime} = require("./StocksAPI");
+const {MessageEmbed, MessageActionRow, MessageButton, MessageAttachment, Permissions} = require("discord.js") 
+const {GetStockOverTime, CreateStockInfo} = require("./StocksAPI");
+const {ReviewStockInfo} = require("./helpers");
 const {RenderChart} = require("./RenderChart");
 
 let GetMessageEmbed = embedId => {
@@ -17,10 +18,11 @@ let GetMessageEmbed = embedId => {
 }
 
 module.exports = {
-    ButtonHandler: async interaction => {
+    ButtonHandler: async (interaction, client) => {
         if (!interaction.isButton()) return;
     
         const data = JSON.parse(interaction.customId);
+        const adminPerms = interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
     
         switch (data.func) {
             case "ChooseTime":
@@ -76,6 +78,23 @@ module.exports = {
                     messageEmbed.image.url = "https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart";
                     return interaction.update({embeds: [messageEmbed]});
                 });
+                break;
+            case "accept":
+                if (adminPerms) {
+                    CreateStockInfo(data.code.toLowerCase(), interaction.guild, interaction.channel);
+                    ReviewStockInfo(data.code.toLowerCase(), client, interaction.channel);
+
+                    configEmbed = new MessageEmbed()
+                        .setColor("#03fc5e")
+                        .setTitle(`Code set as $${data.code.toUpperCase()}. Your server will be reviewed once by our team to make sure there is no schemes.`);
+                    return interaction.update({embeds: [configEmbed.toJSON()], components: []});
+                }
+                break;
+            case "cancel":
+                if (adminPerms) {
+                    return interaction.deleteReply();
+                }
+                break;
         }
     }
 }
