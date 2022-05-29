@@ -152,13 +152,13 @@ module.exports = {
         UpdateUserBalance(id, balance, worth);
         module.exports.GetUserInfo(id).then(userData => {
             let userStock = userData.Stocks.filter(s => s.id === stock.id);
-            let userStockIndex = userData.Stocks.indexOf(userStock);
-            
+            let userStockIndex = userData.Stocks.indexOf(userStock[0]);
+
             if (!stock.delete) {
-                if (userStock != []) {
+                if (userStockIndex > -1) {
                     UpdateUserStock(id, stockString, true, userStockIndex);
                 } else {
-                    UpdateUserStock(id, stockString, false);
+                    UpdateUserStock(id, stockString, false, userStockIndex);
                 }
             } else {
                 DeleteUserStock(id, userStockIndex);
