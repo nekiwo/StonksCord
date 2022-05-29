@@ -46,9 +46,12 @@ client.on("interactionCreate", async interaction => ButtonHandler(interaction, c
 client.on("guildCreate", guild => {
     const channels = guild.channels.cache.filter(channel => channel.type == "text");
 
-    channels.first()
-        .send("Hello! Start by using the `/help` command. Then, use the `/configure` command in order to put your server on the stonk market")
-        .catch(e => console.error(e));
+    if (channels > 0) {
+        channels.first()
+            .send("Hello! Start by using the `/help` command. Then, use the `/configure` command in order to put your server on the stonk market")
+            .catch(e => console.log(e));
+    }
+    
 });
 
 client.login(Token);
