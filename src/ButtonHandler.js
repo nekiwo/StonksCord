@@ -25,7 +25,7 @@ module.exports = {
         const adminPerms = interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
     
         switch (data.func) {
-            case "ChooseTime":
+            /*case "ChooseTime":
                 const selectTimeBtns = new MessageActionRow()
                     .addComponents(
                         new MessageButton()
@@ -78,7 +78,7 @@ module.exports = {
                     messageEmbed.image.url = "https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart";
                     return interaction.update({embeds: [messageEmbed]});
                 });
-                break;
+                break;*/
             case "accept":
                 if (adminPerms) {
                     CreateStockInfo(data.code.toLowerCase(), interaction.guild, interaction.channel);
