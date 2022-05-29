@@ -1,6 +1,6 @@
 const {MessageEmbed, MessageActionRow, MessageButton, Permissions} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetStockInfo, CreateStockInfo} = require("../StocksAPI");
+const {GetStockInfo} = require("../StocksAPI");
 const {ReviewStockInfo} = require("../helpers");
 
 module.exports = {
@@ -45,20 +45,20 @@ module.exports = {
                                         new MessageButton()
                                             .setCustomId(JSON.stringify({
                                                 "func": "accept",
-                                                "stock": code
+                                                "code": code
                                             }))
                                             .setLabel("Accept")
                                             .setStyle("SUCCESS"),
                                         new MessageButton()
                                             .setCustomId(JSON.stringify({
                                                 "func": "cancel",
-                                                "stock": code
+                                                "code": code
                                             }))
                                             .setLabel("Cancel")
                                             .setStyle("DANGER")
                                     );
     
-                                client.on("interactionCreate", async i => {
+                                /*client.on("interactionCreate", async i => {
                                     if (!i.isButton()) return;
                         
                                     if (i.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -80,7 +80,7 @@ module.exports = {
                                     } else {
                                         console.log("no admin")
                                     }
-                                });
+                                });*/
     
                                 return interaction.reply({embeds: [configEmbed.toJSON()], components: [configBtns]});
                             } else {
