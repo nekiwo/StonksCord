@@ -41,7 +41,7 @@ client.on("messageCreate", async message => {
     }
 });
 
-client.on("interactionCreate", ButtonHandler);
+client.on("interactionCreate", async interaction => ButtonHandler(interaction, client));
 
 client.on("guildCreate", guild => {
     const channels = guild.channels.cache.filter(channel => channel.type == "text");
