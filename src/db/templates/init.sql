@@ -9,7 +9,7 @@ CREATE TABLE stocks (
 );
 
 CREATE TABLE users (
-    id bigint PRIMARY KEY UNIQUE,
+    id text PRIMARY KEY UNIQUE,
     balance decimal,
     stocks text[], -- ['test 54']
     worth decimal
