@@ -90,30 +90,24 @@ module.exports = {
     UpdateStockData: (code, members, shares, price) => {
         sendQuery(
             `UPDATE stocks 
-             SET members = array_append(members, $1)
-             WHERE id = $2;`,
-            [members, code]
-        );
-
-        sendQuery(
-            `UPDATE stocks 
-             SET total_shares = array_append(total_shares, $1)
-             WHERE id = $2;`,
-            [shares, code]
-        );
-
-        sendQuery(
-            `UPDATE stocks 
-             SET price = array_append(price, $1)
-             WHERE id = $2;`,
-            [price, code]
-        );
-
-        sendQuery(
-            `UPDATE stocks 
-             SET time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
+             SET members = array_append(members, $2),
+                 total_shares = array_append(total_shares, $3),
+                 price = array_append(price, $4),
+                 time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
              WHERE id = $1;`,
-            [code]
+            [code, members, shares, price]
+        );
+    },
+
+    SetStockData: (code, stockData) => {
+        sendQuery(
+            `UPDATE stocks 
+             SET members = $2,
+                 total_shares = $3,
+                 price = $4,
+                 time_stamps = $5
+             WHERE id = $1;`,
+            [code, stockData.members, stockData.total_shares, stockData.price, stockData.time_stamps]
         );
     },
 
@@ -155,7 +149,8 @@ module.exports = {
         );
 
         sendQuery(
-            ``// delete rows that have zero "time_stamps" entries over past 24 hours
+            `DELETE FROM stock${code}
+             WHERE NOW()::timestamp without time zone - interval '24 hours' > ALL (time_stamps::timestamp without time zone[]);`
         );
     },
 
@@ -200,8 +195,8 @@ module.exports = {
     UpdateUserBalance: (id, balance, worth) => {
         sendQuery(
             `UPDATE users
-             SET balance = $2
-             SET worth = $3
+             SET balance = $2,
+                 worth = $3
              WHERE id = $1;`,
             [id, balance, worth]
         );

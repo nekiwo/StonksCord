@@ -1,6 +1,8 @@
-const {GetAllStocksData, GetAllStockMembersData, DeleteStockMembersData} = require("./db");
+const {GetAllStocksData, DeleteStockMembersData, SetStockData} = require("./db");
 
 // I just don't know how to make a SQL query to clean the database, so here's a script 
+console.log("Started");
+
 GetAllStocksData().then(data => {
     data.forEach(stock => {
         let stockBuffer = {};
@@ -12,7 +14,7 @@ GetAllStocksData().then(data => {
         };
 
         stock.time_stamps.forEach(timestamp => {
-            let parsedTimestamp = new Date(date).toISOString().split("T")[0] + "T00:00:00.000Z";
+            let parsedTimestamp = new Date(timestamp).toISOString().split("T")[0] + "T00:00:00.000Z";
             if (stockBuffer[parsedTimestamp] == undefined) {
                 stockBuffer[parsedTimestamp] = [];
             }
@@ -41,11 +43,11 @@ GetAllStocksData().then(data => {
             }
         }
 
-        // replace arrays in the stock
+        SetStockData(stock.id, stockResult);
         DeleteStockMembersData(stock.id);
-        
 
-        // delete message timestamps older than 7 days in "stockCODE"
-
+        console.log("Finished ", stock.id.toUpperCase());
     });
+
+    console.log("Clean completed");
 });
