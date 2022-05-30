@@ -56,11 +56,22 @@ module.exports = {
 
     GetTopStocksData: (desc) => {
         return new Promise(resolve => {
-            sendQuery(// format this later xd
-                `SELECT * FROM (SELECT id, (SELECT p
-                 FROM (SELECT unnest(price) p, unnest(time_stamps) t FROM stocks) AS test1
-                 ORDER BY abs(extract(epoch FROM (t - (NOW()::timestamp without time zone - INTERVAL '168 hours'))))
-                 limit 1) AS old_price, (SELECT price[array_upper(price, 1)] FROM stocks) AS current_price FROM stocks) AS test3 ORDER BY current_price - old_price ${desc} LIMIT 10`
+            sendQuery(
+                `SELECT * FROM (
+                    SELECT 
+                    id, 
+                    (
+                        SELECT p FROM (
+                            SELECT unnest(price) p, unnest(time_stamps) t FROM stocks
+                        ) AS test1
+                        WHERE t > NOW()::timestamp without time zone - interval '168 hours'
+                        ORDER BY t
+                        LIMIT 1
+                    ) AS old_price,
+                    price[array_upper(price, 1)] AS current_price 
+                    FROM stocks
+                ) AS test3
+                ORDER BY current_price - old_price`
             ).then(data => {
                 resolve(data);
             });
