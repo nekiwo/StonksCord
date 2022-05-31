@@ -30,6 +30,9 @@ module.exports = {
                                         name: "This code is used by everyone else to identify your server",
                                         value: `When someone tries to buy or sell this server's stonk, they will be using "$${code.toUpperCase()}" to identify it`
                                     }, {
+                                        name: "Your server will be publically exposed to all users of StonksCord",
+                                        value: "Your code, invite link, server ID, and icon will be stored and shared publically"
+                                    }, {
                                         name: "You will not be able to change it later",
                                         value: "This code is used to identity your stonk in the database, and can only be changed manually by the developers"
                                     }, {
@@ -57,30 +60,6 @@ module.exports = {
                                             .setLabel("Cancel")
                                             .setStyle("DANGER")
                                     );
-    
-                                /*client.on("interactionCreate", async i => {
-                                    if (!i.isButton()) return;
-                        
-                                    if (i.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-                                        const data = JSON.parse(i.customId);
-                                        
-                                        switch (data.func) {
-                                            case "accept":
-                                                CreateStockInfo(code.toLowerCase(), i.guild, i.channel);
-                                                ReviewStockInfo(code.toLowerCase(), client, i.channel);
-        
-                                                configEmbed = new MessageEmbed()
-                                                    .setColor("#03fc5e")
-                                                    .setTitle(`Code set as $${code.toUpperCase()}. Your server will be reviewed once by our team to make sure there is no schemes.`);
-                                                return i.update({embeds: [configEmbed.toJSON()], components: []});
-                                            case "cancel":
-                                                console.log("delete reply")
-                                                return i.deleteReply();
-                                        }
-                                    } else {
-                                        console.log("no admin")
-                                    }
-                                });*/
     
                                 return interaction.reply({embeds: [configEmbed.toJSON()], components: [configBtns]});
                             } else {
