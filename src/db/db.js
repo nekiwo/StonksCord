@@ -71,7 +71,7 @@ module.exports = {
                     price[array_upper(price, 1)] AS current_price 
                     FROM stocks
                 ) AS test3
-                ORDER BY current_price - old_price`
+                ORDER BY current_price - old_price ${desc}`
             ).then(data => {
                 resolve(data);
             });
