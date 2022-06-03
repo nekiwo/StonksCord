@@ -220,14 +220,27 @@ module.exports = {
                  SET stocks[$2] = $3
                  WHERE id = $1;`,
                 [id, stockIndex, stock]
-            );
-
-            /*sendQuery(
-                `UPDATE users
-                 SET stocks = array_remove(stocks, stocks[$2 + 1])
-                 WHERE id = $1;`,
-                [id, stockIndex]
-            );*/
+            ).then(() => {
+                module.exports.GetUserData().then(data => {
+                    if (data != undefined) {
+                        let stocks = [];
+        
+                        for (const rawStockData of data.stocks) {
+                            let stockId = rawStockData.split(" ")[0];
+                            if (stocks.includes(stockId)) {
+                                sendQuery(
+                                    `UPDATE users
+                                     SET stocks = array_remove(stocks, stocks[$2])
+                                     WHERE id = $1;`,
+                                    [id, data.stocks.indexOf(rawStockData)]
+                                )
+                            } else {
+                                stocks.push(stockId);
+                            }
+                        }
+                    }
+                });
+            });
         } else {
             sendQuery(
                 `UPDATE users 
