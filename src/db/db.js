@@ -221,7 +221,7 @@ module.exports = {
                  WHERE id = $1;`,
                 [id, stockIndex, stock]
             ).then(() => {
-                module.exports.GetUserData().then(data => {
+                module.exports.GetUserData(id).then(data => {
                     if (data != undefined) {
                         let stocks = [];
         
