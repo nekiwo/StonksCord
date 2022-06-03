@@ -17,7 +17,7 @@ for (const file of commandFiles) {
 }
 
 client.once("ready", () => {
-	console.log("Ready!");
+	console.log("Ready! c150");
 });
 
 client.on("interactionCreate", async interaction => {
