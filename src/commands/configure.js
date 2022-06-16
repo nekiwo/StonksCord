@@ -39,8 +39,8 @@ module.exports = {
                                         name: "If you need to change or delete your server from the stonk market",
                                         value: "Please contatct the developers: `nekiwo#7574` or `Foo#7957`"
                                     }, {
-                                        name: "Please proceed by clicking the \"Accept\" button below",
-                                        value: "Otherwise, you may press the \"Cancel\" button"
+                                        name: "I consent to the terms above by clicking the \"Accept\" button",
+                                        value: "I do not consent to the terms above by clicking the \"Cancel\" button"
                                     });
     
                                 const configBtns = new MessageActionRow()
