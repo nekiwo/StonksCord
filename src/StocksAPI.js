@@ -133,10 +133,13 @@ module.exports = {
                 if (usersList != undefined) {
                     let result = [];
                     usersList.forEach(user => {
-                        result.push({
-                            Tag: client.users.cache.get(user.id).username,
-                            Worth: user.worth
-                        });
+                        let fetchedUser = client.users.cache.get(user.id);
+                        if (fetchedUser != undefined) {
+                            result.push({
+                                Tag: fetchedUser.username,
+                                Worth: user.worth
+                            });
+                        }
                     });
 
                     resolve(result);
