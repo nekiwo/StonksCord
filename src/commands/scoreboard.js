@@ -23,6 +23,8 @@ module.exports = {
             let placeFormat;
             let itemsLength;
 
+            const chartEmoji = value => value > 0 ? "📈" : "📉";
+
 			switch (scoreboardType) {
 				case "BestStocks":
 					finalEmbed = new MessageEmbed()
@@ -33,7 +35,10 @@ module.exports = {
 
                     itemsLength = bestStocks.length;
                     placeFormat = (i) => {
-                        finalEmbed.addField(`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`, `Change over 7 days: ${bestStocks[i - 1].Change}$ 📈`, false);
+                        finalEmbed.addField(`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
+                            `Change over 7 days: ${bestStocks[i - 1].Change}$ ${chartEmoji(bestStocks[i - 1].Change)}`,
+                            false
+                        );
                     }
 					break;
 				case "WorstStocks":
@@ -45,7 +50,11 @@ module.exports = {
 
                     itemsLength = worstStocks.length;
                     placeFormat = (i) => {
-                        finalEmbed.addField(`#${i} $${worstStocks[i - 1].Code.toUpperCase()}`, `Change over 7 days: ${worstStocks[i - 1].Change}$ 📉`, false);
+                        finalEmbed.addField(
+                            `#${i} $${worstStocks[i - 1].Code.toUpperCase()}`,
+                            `Change over 7 days: ${worstStocks[i - 1].Change}$ ${chartEmoji(worstStocks[i - 1].Change)}`,
+                            false
+                        );
                     }
 					break;
 				case "RichestUsers":
