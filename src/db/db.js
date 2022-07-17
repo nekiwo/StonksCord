@@ -196,7 +196,7 @@ module.exports = {
     GetTopUsersData: () => {
         return new Promise(resolve => {
             sendQuery(
-                `SELECT * FROM users ORDER BY worth LIMIT 10;`
+                `SELECT * FROM users ORDER BY worth DESC LIMIT 10;`
             ).then(data => {
                 resolve(data);
             });

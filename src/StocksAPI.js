@@ -129,18 +129,22 @@ module.exports = {
 
     GetTopUsersList: (client) => {
         return new Promise(async resolve => {
-            GetTopUsersData().then(usersList => {
+            GetTopUsersData().then(async usersList => {
+                console.log(usersList.length)
                 if (usersList != undefined) {
                     let result = [];
-                    usersList.forEach(user => {
-                        let fetchedUser = client.users.cache.get(user.id);
+
+                    for (let i = 0; i < usersList.length; i++) {
+                        let user = usersList[i];
+                        let fetchedUser = await client.users.fetch(user.id);
+
                         if (fetchedUser != undefined) {
                             result.push({
                                 Tag: fetchedUser.username,
                                 Worth: user.worth
                             });
                         }
-                    });
+                    }
 
                     resolve(result);
                 } else {
