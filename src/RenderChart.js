@@ -1,7 +1,7 @@
 const fs = require("fs");
 const {ChartJSNodeCanvas} = require("chartjs-node-canvas");
 
-let FormatChartData = (data, type) => {
+let FormatChartData = (data, type, time) => {
     let resultBuffer = {};
     let result = [];
     
@@ -16,10 +16,18 @@ let FormatChartData = (data, type) => {
 
     for (let date in resultBuffer) {
         result.push({
-            x: (new Date(date).getTime()).toString(),
+            x: (new Date(date).getTime()),
             y: Math.max(...resultBuffer[date])//resultBuffer[date].reduce((a, b) => a + b) / resultBuffer[date].length
         });
     }
+
+    // maybe remove later, still unfinished
+    let oneTimeAgo = new Date();
+    oneTimeAgo.setDate(oneTimeAgo.getDate() - time);
+    result.push({
+        x: oneTimeAgo.getTime(),
+        y: Math.min(...result.map(point => point.y))
+    });
 
     return result;
 }
@@ -29,12 +37,14 @@ module.exports = {
         return new Promise(async resolve => {
             const fileName = `${code}${time}_${Date.now()}.png`;
 
-            let formattedData;
+            let cutOff;
             if (time > 7) {
-                formattedData = FormatChartData(data, "T00:00:00.000Z");
+                cutOff = "T00:00:00.000Z";
             } else {
-                formattedData = FormatChartData(data, ":00:00.000Z");
+                cutOff = ":00:00.000Z";
             }
+
+            let formattedData = FormatChartData(data, cutOff, time);
 
             const chartJSNodeCanvas = new ChartJSNodeCanvas({
                 width: 512,
