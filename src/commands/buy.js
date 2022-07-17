@@ -68,7 +68,7 @@ module.exports = {
                 sharesOwned = ownedStock[0].shares;
             }
 
-            if (userInfo.Balance <= amount * stockInfo.Price) {
+            if (userInfo.Balance < amount * stockInfo.Price) {
                 return interaction.reply(
                     `You do not have enough money to buy ${amount} shares of $${stockCode.toUpperCase()}
 You have: ${RoundPlaces(userInfo.Balance)}$
