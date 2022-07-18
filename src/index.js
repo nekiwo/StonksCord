@@ -1,8 +1,26 @@
 const fs = require("fs");
 const {Client, Collection, Intents} = require("discord.js");
-const {Token} = require("./config.json");
 const {MessageCounter} = require("./MessageCounter");
 const {ButtonHandler} = require("./ButtonHandler");
+let Token;
+
+if (fs.existsSync("./config.json")) {
+    Token = require("./config.json").Token;
+} else {
+    const template = fs.readFileSync("./config_template.json", "utf8");
+    
+    let data = JSON.parse(template);
+    data.ClientId = process.env.CLIENT_ID;
+    data.Token = process.env.TOKEN;
+
+    data.DBConfig.db.host = process.env.HOST;
+    data.DBConfig.db.port = process.env.DB_PORT;
+    data.DBConfig.db.user = process.env.USER;
+    data.DBConfig.db.password = process.env.PASSWORD;
+    data.DBConfig.db.database = process.env.DATABASE;
+
+    fs.writeFileSync("./config.json", data);
+}
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]
