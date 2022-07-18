@@ -1,7 +1,8 @@
 const fs = require("fs");
+const path = require("path");
 const {Pool, types} = require("pg");
 
-const config = JSON.parse(fs.readFileSync("./config.json"));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "config.json")));
 const pool = new Pool(config.DBConfig.db);
 
 types.setTypeParser(1700, value => parseFloat(value));

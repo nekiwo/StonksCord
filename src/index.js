@@ -1,13 +1,18 @@
 const fs = require("fs");
+const path = require("path");
 const {Client, Collection, Intents} = require("discord.js");
-const {MessageCounter} = require("./MessageCounter");
-const {ButtonHandler} = require("./ButtonHandler");
+const {MessageCounter} = require(path.join(__dirname, "MessageCounter"));
+const {ButtonHandler} = require(path.join(__dirname, "ButtonHandler"));
+
+
+const configPath = path.join(__dirname, "config.json");
+const configTemplatePath = path.join(__dirname, "config_template.json");
 let Token;
 
-if (fs.existsSync("./config.json")) {
-    Token = require("./config.json").Token;
+if (fs.existsSync(configPath)) {
+    Token = require(configPath).Token;
 } else {
-    const template = fs.readFileSync("./config_template.json", "utf8");
+    const template = fs.readFileSync(configTemplatePath, "utf8");
     
     let data = JSON.parse(template);
     data.ClientId = process.env.CLIENT_ID;
@@ -19,7 +24,7 @@ if (fs.existsSync("./config.json")) {
     data.DBConfig.db.password = process.env.PASSWORD;
     data.DBConfig.db.database = process.env.DATABASE;
 
-    fs.writeFileSync("./config.json", data);
+    fs.writeFileSync(configPath, data);
 }
 
 const client = new Client({
@@ -27,10 +32,10 @@ const client = new Client({
 });
 
 client.commands = new Collection();
-const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+const commandFiles = fs.readdirSync(path.join(__dirname, "commands")).filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(path.join(__dirname, "commands", file));
     client.commands.set(command.data.name, command);
 }
 

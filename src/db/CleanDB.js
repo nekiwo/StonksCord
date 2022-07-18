@@ -1,4 +1,5 @@
-const {GetAllStocksData, DeleteStockMembersData, SetStockData} = require("./db");
+const path = require("path");
+const {GetAllStocksData, DeleteStockMembersData, SetStockData} = require(path.join(__dirname, "db"));
 
 // I just don't know how to make a SQL query to clean the database, so here's a script 
 console.log("Started");

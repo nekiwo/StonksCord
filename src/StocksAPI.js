@@ -1,5 +1,6 @@
-const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData, GetStockDataOverTime, GetTopStocksData, GetTopUsersData} = require("./db/db");
-const {CalculatePrice, TotalMembers} = require("./helpers");
+const path = require("path");
+const {GetStockData, GetStockMembersData, UpdateStockData, UpdateStockMembersData, CreateStockData, CreateStockMembersData, GetUserData, UpdateUserBalance, UpdateUserStock, DeleteUserStock, CreateUserData, GetStockDataOverTime, GetTopStocksData, GetTopUsersData} = require(path.join(__dirname, "db", "db"));
+const {CalculatePrice, TotalMembers} = require(path.join(__dirname, "helpers"));
 
 module.exports = {
 	GetStockInfo: (value, column) => {

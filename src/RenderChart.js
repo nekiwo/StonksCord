@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const {ChartJSNodeCanvas} = require("chartjs-node-canvas");
 
 let FormatChartData = (data, type, time) => {
@@ -111,7 +112,7 @@ module.exports = {
             };
 
             const image = await chartJSNodeCanvas.renderToBuffer(config);
-            fs.writeFile(`./img/${fileName}`, image, "binary", (err) => {
+            fs.writeFile(path.join(__dirname, "img", fileName), image, "binary", (err) => {
                 if (err) {
                     console.error(err);
                 }
