@@ -20,7 +20,7 @@ if (fs.existsSync(configPath)) {
     data.DBConfig.db.password = process.env.PASSWORD;
     data.DBConfig.db.database = process.env.DATABASE;
 
-    fs.writeFileSync(configPath, data);
+    fs.writeFileSync(configPath, JSON.stringify(data));
 }
 
 const {Client, Collection, Intents} = require("discord.js");
