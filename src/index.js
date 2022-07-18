@@ -13,6 +13,7 @@ if (fs.existsSync(configPath)) {
     let data = JSON.parse(template);
     data.ClientId = process.env.SC_CLIENT_ID.toString();
     data.Token = process.env.SC_TOKEN;
+    Token = process.env.SC_TOKEN;
 
     data.DBConfig.db.host = process.env.SC_HOST;
     data.DBConfig.db.port = process.env.SC_PORT.toString();
