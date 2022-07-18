@@ -1,3 +1,4 @@
+const path = require("path");
 const {MessageEmbed} = require("discord.js") 
 const {SlashCommandBuilder} = require("@discordjs/builders");
 const {GetUserInfo, CreateUserInfo} = require(path.join(__dirname, "..", "StocksAPI"));
