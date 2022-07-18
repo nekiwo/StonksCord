@@ -11,14 +11,14 @@ if (fs.existsSync(configPath)) {
     const template = fs.readFileSync(configTemplatePath, "utf8");
     
     let data = JSON.parse(template);
-    data.ClientId = process.env.CLIENT_ID;
-    data.Token = process.env.TOKEN;
+    data.ClientId = process.env.SC_CLIENT_ID.toString();
+    data.Token = process.env.SC_TOKEN;
 
-    data.DBConfig.db.host = process.env.HOST;
-    data.DBConfig.db.port = process.env.DB_PORT;
-    data.DBConfig.db.user = process.env.USER;
-    data.DBConfig.db.password = process.env.PASSWORD;
-    data.DBConfig.db.database = process.env.DATABASE;
+    data.DBConfig.db.host = process.env.SC_HOST;
+    data.DBConfig.db.port = process.env.SC_PORT.toString();
+    data.DBConfig.db.user = process.env.SC_USER;
+    data.DBConfig.db.password = process.env.SC_PASSWORD;
+    data.DBConfig.db.database = process.env.SC_DATABASE;
 
     fs.writeFileSync(configPath, JSON.stringify(data));
 }
