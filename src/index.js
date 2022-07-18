@@ -1,9 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const {Client, Collection, Intents} = require("discord.js");
-const {MessageCounter} = require(path.join(__dirname, "MessageCounter"));
-const {ButtonHandler} = require(path.join(__dirname, "ButtonHandler"));
-
 
 const configPath = path.join(__dirname, "config.json");
 const configTemplatePath = path.join(__dirname, "config_template.json");
@@ -26,6 +22,10 @@ if (fs.existsSync(configPath)) {
 
     fs.writeFileSync(configPath, data);
 }
+
+const {Client, Collection, Intents} = require("discord.js");
+const {MessageCounter} = require(path.join(__dirname, "MessageCounter"));
+const {ButtonHandler} = require(path.join(__dirname, "ButtonHandler"));
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]
