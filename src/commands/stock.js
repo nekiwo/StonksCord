@@ -94,7 +94,7 @@ module.exports = {
                         .setStyle("PRIMARY")
                 );
             
-            return interaction.reply({embeds: [stockEmbed.toJSON()], components: [showGraphBtn]});
+            return interaction.reply({embeds: [stockEmbed.toJSON()], components: []});
         }
 	},
 
