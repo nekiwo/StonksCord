@@ -44,9 +44,9 @@ module.exports = {
 
     GetTopStocksList: (isDesc) => {
         return new Promise(async resolve => {
-            let desc = "";
+            let desc = "DESC";
             if (isDesc) {
-                desc = "DESC";
+                desc = "";
             }
 
             GetTopStocksData(desc).then(stocksList => {
