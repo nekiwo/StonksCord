@@ -2,32 +2,18 @@ const fs = require("fs");
 const path = require("path");
 const {ChartJSNodeCanvas} = require("chartjs-node-canvas");
 
-let FormatChartData = (data, type, time) => {
-    let resultBuffer = {};
-    let result = [];
-    
-    for (let i = 0; i < data.length; i++) {
-        let parsedDate = new Date(data[i].x).toISOString().split(type[0])[0] + type;
-        if (resultBuffer[parsedDate] == undefined) {
-            resultBuffer[parsedDate] = [];
-        }
+const formatChartData = (data) => {
+    let result = {
+        x: [],
+        y: []
+    };
 
-        resultBuffer[parsedDate].push(data[i].y);    
-    }
-
-    for (let date in resultBuffer) {
-        result.push({
-            x: (new Date(date).getTime()),
-            y: Math.max(...resultBuffer[date])//resultBuffer[date].reduce((a, b) => a + b) / resultBuffer[date].length
-        });
-    }
-
-    // maybe remove later, still unfinished
-    let oneTimeAgo = new Date();
-    oneTimeAgo.setDate(oneTimeAgo.getDate() - time);
-    result.push({
-        x: oneTimeAgo.getTime(),
-        y: Math.min(...result.map(point => point.y))
+    const timeMin = new Date(data[0].x).getTime();
+    const timeMax = new Date(data.at(-1).x).getTime() - timeMin;
+ 
+    data.forEach(point => {
+        result.x.push(((new Date(point.x).getTime() - timeMin) / timeMax) * 10);
+        result.y.push(point.y);
     });
 
     return result;
@@ -38,29 +24,25 @@ module.exports = {
         return new Promise(async resolve => {
             const fileName = `${code}${time}_${Date.now()}.png`;
 
-            let cutOff;
-            if (time > 7) {
-                cutOff = "T00:00:00.000Z";
-            } else {
-                cutOff = ":00:00.000Z";
-            }
-
-            let formattedData = FormatChartData(data, cutOff, time);
+            const formattedData = formatChartData(data);
+            const formattedTime = Math.ceil((Date.now() - (new Date(data[0].x).getTime() - 1000 * 60 * 60 * 5)) / 86400000) // = 1000 * 60 * 60
 
             const chartJSNodeCanvas = new ChartJSNodeCanvas({
                 width: 512,
                 height: 512,
                 backgroundColor: "white"
             });
-            const config = {
+
+            const image = await chartJSNodeCanvas.renderToBuffer({
                 type: "line",
                 data: {
+                    labels: formattedData.x,
                     datasets: [{
-                        label: `Price over ${time} day(s)`,
+                        label: `Price over past ${formattedTime} day(s)`,
                         borderColor: "#03fc5e",
                         backgroundColor: "#03fc5e",
                         borderWidth: 5,
-                        data: formattedData
+                        data: formattedData.y
                     }]
                 },
                 options: {
@@ -88,7 +70,7 @@ module.exports = {
                         }
                     },
                     elements: {
-                        point:{
+                        point: {
                             radius: 0
                         }
                     },
@@ -109,9 +91,8 @@ module.exports = {
                         }
                     }
                 }]
-            };
+            });
 
-            const image = await chartJSNodeCanvas.renderToBuffer(config);
             fs.writeFile(path.join(__dirname, "img", fileName), image, "binary", (err) => {
                 if (err) {
                     console.error(err);
