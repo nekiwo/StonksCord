@@ -66,19 +66,21 @@ module.exports = {
             case "RenderChart":
                 let messageEmbed = GetMessageEmbed(data.embedId);
 
-                RenderChart(data.code, data.time, await GetStockOverTime(data.code, data.time, "price")).then(async imgName => {
-                    const attachment = new MessageAttachment(path.join(__dirname, "img", imgName), imgName);
-                    messageEmbed.image = {url: `attachment://${imgName}`}
-                    
-                    await interaction.update({embeds: [messageEmbed], files: [attachment]});
-                    fs.unlink(path.join(__dirname, "img", imgName), err => {
-                        if (err) console.error(err);
+                if (messageEmbed != undefined) {
+                    RenderChart(data.code, data.time, await GetStockOverTime(data.code, data.time, "price")).then(async imgName => {
+                        const attachment = new MessageAttachment(path.join(__dirname, "img", imgName), imgName);
+                        messageEmbed.image = {url: `attachment://${imgName}`}
+                        
+                        await interaction.update({embeds: [messageEmbed], files: [attachment]});
+                        fs.unlink(path.join(__dirname, "img", imgName), err => {
+                            if (err) console.error(err);
+                        });
+                    }).catch(err => {
+                        console.error(err);
+                        messageEmbed.image.url = "https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart";
+                        return interaction.update({embeds: [messageEmbed]});
                     });
-                }).catch(err => {
-                    console.error(err);
-                    messageEmbed.image.url = "https://via.placeholder.com/512x512.png?text=Error+Rendering+Chart";
-                    return interaction.update({embeds: [messageEmbed]});
-                });
+                }
                 break;
             case "accept":
                 if (adminPerms) {
