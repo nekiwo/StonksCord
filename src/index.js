@@ -9,7 +9,7 @@ if (fs.existsSync(configPath)) {
     Token = require(configPath).Token;
 } else {
     const template = fs.readFileSync(configTemplatePath, "utf8");
-    
+
     let data = JSON.parse(template);
     data.ClientId = process.env.SC_CLIENT_ID.toString();
     data.Token = process.env.SC_TOKEN;
@@ -63,6 +63,54 @@ client.on("messageCreate", async message => {
 	if (!message.author.bot) {
         MessageCounter(message.guild.id, message.author.id);
     }
+
+    // daily scoreboards
+    var stocksChannel = client.channels.get(928729255699959839);
+    channel.messages.fetch({ limit: 1 }).then(messages => {
+      let lastMessage = messages.first();
+
+      var lasttime = lastMessage.createdAt;
+      var currenttime = Date();
+
+      var diffMS = currenttime - lasttime;
+
+      if((diffMS / 1000) > 86400) {
+            bestStocksEmbed = new MessageEmbed() // taken from scoreboard command
+              .setColor("#03fc5e")
+              .setTitle("Top 10 best performing stonks");
+
+            const bestStocks = await GetTopStocksList(false);
+
+            itemsLength = bestStocks.length;
+            placeFormat = (i) => {
+              bestStocksEmbed.addField(`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
+                  `Change over 7 days: ${bestStocks[i - 1].Change}$ ${chartEmoji(bestStocks[i - 1].Change)}`,
+                  false
+              );
+            }
+            worstStocksEmbed = new MessageEmbed() // taken from scoreboard command
+              .setColor("#03fc5e")
+              .setTitle("Top 10 worst performing stonks");
+
+            const worstStocks = await GetTopStocksList(true);
+
+            itemsLength = worstStocks.length;
+            placeFormat = (i) => {
+              worstStocksEmbed.addField(
+                  `#${i} $${worstStocks[i - 1].Code.toUpperCase()}`,
+                  `Change over 7 days: ${worstStocks[i - 1].Change}$ ${chartEmoji(worstStocks[i - 1].Change)}`,
+                  false
+              );
+            }
+
+            stocksChannel.send({
+                content: 'Best/worst performing stocks:',
+                embeds: [bestStocksEmbed, worstStocksEmbed],
+            });
+      }
+
+    })
+    .catch(console.error);
 });
 
 client.on("interactionCreate", async interaction => ButtonHandler(interaction, client));
@@ -75,7 +123,7 @@ client.on("guildCreate", guild => {
             .send("Hello! Start by using the `/help` command. Then, use the `/configure` command in order to put your server on the stonk market")
             .catch(e => console.log(e));
     }
-    
+
 });
 
 client.login(Token);
