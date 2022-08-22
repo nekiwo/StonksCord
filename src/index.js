@@ -66,7 +66,7 @@ client.on("messageCreate", async message => {
 
     // daily scoreboards
     var stocksChannel = client.channels.get(928729255699959839);
-    channel.messages.fetch({ limit: 1 }).then(messages => {
+    channel.messages.fetch({ limit: 1 }).then(async messages => {
       let lastMessage = messages.first();
 
       var lasttime = lastMessage.createdAt;
