@@ -36,7 +36,8 @@ module.exports = {
 
                     itemsLength = bestStocks.length;
                     placeFormat = (i) => {
-                        finalEmbed.addField(`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
+                        finalEmbed.addField(
+                            `#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
                             `Change over 7 days: ${bestStocks[i - 1].Change}$ ${chartEmoji(bestStocks[i - 1].Change)}`,
                             false
                         );
