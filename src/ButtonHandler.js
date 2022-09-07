@@ -95,7 +95,11 @@ module.exports = {
                 break;
             case "cancel":
                 if (adminPerms) {
-                    return interaction.deleteReply();
+                    cancelEmbed = new MessageEmbed()
+                        .setColor("#03fc5e")
+                        .setTitle("Server Configuration Cancelled");
+
+                    return interaction.update({embeds: [cancelEmbed.toJSON()], components: []});
                 }
                 break;
         }
