@@ -68,7 +68,7 @@ client.on("messageCreate", async message => {
 		MessageCounter(message.guild.id, message.author.id);
 	}
 	// Check if server is stonkscord hub
-	if (message.guild.id === "928395336324644904") {
+	if (message.guild != undefined && message.guild.id === "928395336324644904") {
 		const stockChannel = await message.guild.channels.fetch("928729255699959839");
 	
 		if (lastTime === undefined) {
