@@ -60,52 +60,54 @@ client.on("interactionCreate", async interaction => {
 	}
 });
 
+// daily scoreboards for stonkcord hub
 const chartEmoji = value => value > 0 ? "📈" : "📉";
 let lastTime;
 client.on("messageCreate", async message => {
 	if (!message.author.bot) {
 		MessageCounter(message.guild.id, message.author.id);
 	}
-
-	const stockChannel = await message.guild.channels.fetch("928729255699959839");
-
-	// daily scoreboards
-	if (lastTime === undefined) {
-		lastTime = (await stockChannel.messages.fetch({limit: 1})).values().next().value.createdTimestamp;
-	}
-
-	if (Date.now() - lastTime > 86400000) {
-		lastTime = Date.now();
-
-		let bestStocksEmbed = new MessageEmbed() // taken from scoreboard command
-			.setColor("#03fc5e")
-			.setTitle("Top 10 best performing stonks");
-
-		const bestStocks = await GetTopStocksList(false);
-
-		for (let i = 1; i <= bestStocks.length; i++) {
-			bestStocksEmbed.addField(
-				`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
-				`Change over 7 days: ${bestStocks[i - 1].Change}$ ${chartEmoji(bestStocks[i - 1].Change)}`,
-				false
-			);
+	// Check if server is stonkscord hub
+	if (message.guild.id === "928395336324644904") {
+		const stockChannel = await message.guild.channels.fetch("928729255699959839");
+	
+		if (lastTime === undefined) {
+			lastTime = (await stockChannel.messages.fetch({limit: 1})).values().next().value.createdTimestamp;
 		}
-
-		let worstStocksEmbed = new MessageEmbed() // taken from scoreboard command
-			.setColor("#03fc5e")
-			.setTitle("Top 10 worst performing stonks");
-
-		const worstStocks = await GetTopStocksList(true);
-
-		for (let i = 1; i <= worstStocks.length; i++) {
-			worstStocksEmbed.addField(
-				`#${i} $${worstStocks[i - 1].Code.toUpperCase()}`,
-				`Change over 7 days: ${worstStocks[i - 1].Change}$ ${chartEmoji(worstStocks[i - 1].Change)}`,
-				false
-			);
+	
+		if (Date.now() - lastTime > 86400000) {
+			lastTime = Date.now();
+	
+			let bestStocksEmbed = new MessageEmbed() // taken from scoreboard command
+				.setColor("#03fc5e")
+				.setTitle("Top 10 best performing stonks");
+	
+			const bestStocks = await GetTopStocksList(false);
+	
+			for (let i = 1; i <= bestStocks.length; i++) {
+				bestStocksEmbed.addField(
+					`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
+					`Change over 7 days: ${bestStocks[i - 1].Change}$ ${chartEmoji(bestStocks[i - 1].Change)}`,
+					false
+				);
+			}
+	
+			let worstStocksEmbed = new MessageEmbed() // taken from scoreboard command
+				.setColor("#03fc5e")
+				.setTitle("Top 10 worst performing stonks");
+	
+			const worstStocks = await GetTopStocksList(true);
+	
+			for (let i = 1; i <= worstStocks.length; i++) {
+				worstStocksEmbed.addField(
+					`#${i} $${worstStocks[i - 1].Code.toUpperCase()}`,
+					`Change over 7 days: ${worstStocks[i - 1].Change}$ ${chartEmoji(worstStocks[i - 1].Change)}`,
+					false
+				);
+			}
+	
+			stockChannel.send({embeds: [bestStocksEmbed, worstStocksEmbed]});
 		}
-
-		stockChannel.send({embeds: [bestStocksEmbed, worstStocksEmbed]});
 	}
 });
 
