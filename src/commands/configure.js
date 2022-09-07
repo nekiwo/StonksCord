@@ -31,14 +31,14 @@ module.exports = {
                                         name: "This code is used by everyone else to identify your server",
                                         value: `When someone tries to buy or sell this server's stonk, they will be using "$${code.toUpperCase()}" to identify it`
                                     }, {
-                                        name: "Your server will be publically exposed to all users of StonksCord",
-                                        value: "Your code, invite link, server ID, and icon will be stored and shared publically"
+                                        name: "Your server will be publicly exposed to all users of StonksCord",
+                                        value: "Your code, invite link, server ID, and icon will be stored and shared publicly"
                                     }, {
                                         name: "You will not be able to change it later",
                                         value: "This code is used to identity your stonk in the database, and can only be changed manually by the developers"
                                     }, {
                                         name: "If you need to change or delete your server from the stonk market",
-                                        value: "Please contatct the developers: `nekiwo#7574` or `Foo#7957`"
+                                        value: "Please contact the developers: `nekiwo#7574` or `Foo#7957`"
                                     }, {
                                         name: "I consent to the terms above by clicking the \"Accept\" button",
                                         value: "I do not consent to the terms above by clicking the \"Cancel\" button"
