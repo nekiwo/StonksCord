@@ -28,6 +28,7 @@ const {Client, Collection, Intents, MessageEmbed} = require("discord.js");
 const {MessageCounter} = require(path.join(__dirname, "MessageCounter"));
 const {ButtonHandler} = require(path.join(__dirname, "ButtonHandler"));
 const {GetTopStocksList} = require(path.join(__dirname, "StocksAPI"));
+const {BestWorstEmbeds} = require(path.join(__dirname, "BestWorstStocks"));
 
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]
@@ -78,35 +79,7 @@ client.on("messageCreate", async message => {
 		if (Date.now() - lastTime > 86400000) {
 			lastTime = Date.now();
 	
-			let bestStocksEmbed = new MessageEmbed() // taken from scoreboard command
-				.setColor("#03fc5e")
-				.setTitle("Top 10 best performing stonks");
-	
-			const bestStocks = await GetTopStocksList(false);
-	
-			for (let i = 1; i <= bestStocks.length; i++) {
-				bestStocksEmbed.addField(
-					`#${i} $${bestStocks[i - 1].Code.toUpperCase()}`,
-					`Change over 7 days: ${bestStocks[i - 1].Change}$ ${chartEmoji(bestStocks[i - 1].Change)}`,
-					false
-				);
-			}
-	
-			let worstStocksEmbed = new MessageEmbed() // taken from scoreboard command
-				.setColor("#03fc5e")
-				.setTitle("Top 10 worst performing stonks");
-	
-			const worstStocks = await GetTopStocksList(true);
-	
-			for (let i = 1; i <= worstStocks.length; i++) {
-				worstStocksEmbed.addField(
-					`#${i} $${worstStocks[i - 1].Code.toUpperCase()}`,
-					`Change over 7 days: ${worstStocks[i - 1].Change}$ ${chartEmoji(worstStocks[i - 1].Change)}`,
-					false
-				);
-			}
-	
-			stockChannel.send({embeds: [bestStocksEmbed, worstStocksEmbed]});
+			stockChannel.send({embeds: BestWorstEmbeds()});
 		}
 	}
 });
