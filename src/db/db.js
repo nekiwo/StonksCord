@@ -32,7 +32,7 @@ module.exports = {
             sendQuery(
                 `SELECT cardinality(array_agg(msg)) FROM  (
                     SELECT * FROM
-                    (SELECT id, unnest(time_stamps) msg FROM stock${code}) AS test1
+                    (SELECT id, unnest(time_stamps) msg FROM stock_${code}) AS test1
                     WHERE NOW() - msg < interval '24 hour'
                  ) AS test2
                  GROUP BY id;`
@@ -92,7 +92,7 @@ module.exports = {
     GetAllStockMembersData: (code) => {
         return new Promise(resolve => {
             sendQuery(
-                `SELECT * FROM stock${code}`
+                `SELECT * FROM stock_${code}`
             ).then(data => {
                 resolve(data);
             });
@@ -125,18 +125,18 @@ module.exports = {
 
     UpdateStockMembersData: (code, userId) => {
         sendQuery(
-            `SELECT * FROM stock${code} WHERE id = $1;`, 
+            `SELECT * FROM stock_${code} WHERE id = $1;`, 
             [userId]
         ).then(data => {
             if (data.length === 0) {
                 sendQuery(
-                    `INSERT INTO stock${code}
+                    `INSERT INTO stock_${code}
                      VALUES ($1, ARRAY [NOW()::timestamp without time zone]::timestamp without time zone[]);`, 
                     [userId]
                 );
             } else {
                 sendQuery(
-                    `UPDATE stock${code} 
+                    `UPDATE stock_${code} 
                      SET time_stamps = array_append(time_stamps, NOW()::timestamp without time zone)
                      WHERE id = $1;`,
                     [userId]
@@ -149,19 +149,19 @@ module.exports = {
         sendQuery(
             `WITH corrected AS (
                 SELECT id, array_agg(ts) new_time_stamps
-                FROM stock${code}, unnest(time_stamps) ts
+                FROM stock_${code}, unnest(time_stamps) ts
                 WHERE NOW()::timestamp without time zone - ts < interval '24 hours'
                 GROUP BY id
             )
-            UPDATE stock${code}
+            UPDATE stock_${code}
             SET time_stamps = new_time_stamps
             FROM corrected
             WHERE time_stamps <> new_time_stamps
-            AND stock${code}.id = corrected.id;`
+            AND stock_${code}.id = corrected.id;`
         );
 
         sendQuery(
-            `DELETE FROM stock${code}
+            `DELETE FROM stock_${code}
              WHERE NOW()::timestamp without time zone - interval '24 hours' > ALL (time_stamps::timestamp without time zone[]);`
         );
     },
@@ -176,7 +176,7 @@ module.exports = {
 
     CreateStockMembersData: (code) => {
         sendQuery(
-            `CREATE TABLE stock${code} (
+            `CREATE TABLE stock_${code} (
                  id text PRIMARY KEY UNIQUE,
                  time_stamps timestamp without time zone[]
              );`

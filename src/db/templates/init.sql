@@ -15,7 +15,7 @@ CREATE TABLE users (
     worth decimal
 );
 
-CREATE TABLE stockID /* STOCK ID HERE */ (
+CREATE TABLE stock_ID /* STOCK ID HERE */ (
     id text PRIMARY KEY UNIQUE,
     time_stamps timestamp without time zone[]
 );
