@@ -103,7 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-# Discord Bot Token
-src/config.json
-
-test
+# Config data
+config.json

@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const configPath = path.join(__dirname, "config.json");
-const configTemplatePath = path.join(__dirname, "config_template.json");
+const configPath = path.join(__dirname, "..", "config.json");
+const configTemplatePath = path.join(__dirname, "..", "config_template.json");
 let Token;
 
 if (fs.existsSync(configPath)) {
@@ -25,10 +25,10 @@ if (fs.existsSync(configPath)) {
 }
 
 const {Client, Collection, Intents, MessageEmbed} = require("discord.js");
-const {MessageCounter} = require(path.join(__dirname, "MessageCounter"));
-const {ButtonHandler} = require(path.join(__dirname, "ButtonHandler"));
-const {GetTopStocksList} = require(path.join(__dirname, "StocksAPI"));
-const {BestWorstEmbeds} = require(path.join(__dirname, "BestWorstStocks"));
+const {MessageCounter} = require(path.join(__dirname, "util", "message_counter"));
+const {ButtonHandler} = require(path.join(__dirname, "util", "button_handler"));
+const {GetTopStocksList} = require(path.join(__dirname, "util", "stocks_api"));
+const {BestWorstEmbeds} = require(path.join(__dirname, "util", "best_worst_stocks"));
 
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES]

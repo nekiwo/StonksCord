@@ -1,8 +1,8 @@
 const path = require("path");
 const {MessageEmbed} = require("discord.js");
 const {SlashCommandBuilder} = require("@discordjs/builders");
-const {GetStockInfo, UpdateStockInfo, GetUserInfo, UpdateUserInfo} = require(path.join(__dirname, "..", "StocksAPI"));
-const {FindGuild, TotalMembers, RoundPlaces} = require(path.join(__dirname, "..", "helpers"));
+const {GetStockInfo, UpdateStockInfo, GetUserInfo, UpdateUserInfo} = require(path.join(__dirname, "../util", "stocks_api"));
+const {FindGuild, TotalMembers, RoundPlaces} = require(path.join(__dirname, "../util", "helpers"));
 
 module.exports = {
 	data: new SlashCommandBuilder()

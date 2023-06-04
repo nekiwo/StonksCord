@@ -1,9 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const {MessageEmbed, MessageActionRow, MessageButton, MessageAttachment, Permissions} = require("discord.js") 
-const {GetStockOverTime, CreateStockInfo} = require(path.join(__dirname, "StocksAPI"));
+const {GetStockOverTime, CreateStockInfo} = require(path.join(__dirname, "stocks_api"));
 const {ReviewStockInfo} = require(path.join(__dirname, "helpers"));
-const {RenderChart} = require(path.join(__dirname, "RenderChart"));
+const {RenderChart} = require(path.join(__dirname, "render_chart"));
 
 let GetMessageEmbed = embedId => {
     const commandFiles = fs.readdirSync(path.join(__dirname, "commands")).filter(file => file.endsWith(".js"));

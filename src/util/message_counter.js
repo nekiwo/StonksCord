@@ -1,5 +1,5 @@
 const path = require("path");
-const {GetStockInfo, UpdateStockMembers} = require(path.join(__dirname, "StocksAPI"));
+const {GetStockInfo, UpdateStockMembers} = require(path.join(__dirname, "stocks_api"));
 
 module.exports = {
     MessageCounter: async (guildId, userId) => {
