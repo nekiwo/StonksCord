@@ -1,5 +1,6 @@
 const path = require("path");
 const {SlashCommandBuilder} = require("@discordjs/builders");
+const {MessageEmbed} = require("discord.js");
 const {InviteToGuild} = require(path.join(__dirname, "..", "helpers"));
 
 // just a testing/debug command

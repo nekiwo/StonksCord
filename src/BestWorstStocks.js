@@ -1,5 +1,6 @@
 const path = require("path");
 const {GetTopStocksList} = require(path.join(__dirname, "StocksAPI"));
+const {MessageEmbed} = require("discord.js") ;
 
 module.exports = {
     BestWorstEmbeds: () => {
